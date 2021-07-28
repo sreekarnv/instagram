@@ -1,12 +1,107 @@
+import FormInput from '../components/FormInput';
+import { Formik } from 'formik';
 import React from 'react';
-import {Text, View} from "react-native";
+import { Button, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthScreenProps } from '../navigation/AuthNavigator';
+import { MeDocument, useRegisterMutation } from '../graphql/generated';
+import { getFormikErrors } from '../utils/formikFieldError';
 
-const Register = () => {
-    return (
-        <View>
-            <Text>This is the Register Screen</Text>
-        </View>
-    );
+const Register = ({ navigation }: AuthScreenProps) => {
+	const [register, { loading }] = useRegisterMutation();
+
+	return (
+		<SafeAreaView style={styles.container}>
+			<Formik
+				initialValues={{
+					name: '',
+					email: '',
+					password: '',
+					passwordConfirm: '',
+				}}
+				onSubmit={(
+					{ email, password, name, passwordConfirm },
+					{ setErrors, resetForm }
+				) => {
+					register({
+						variables: {
+							email,
+							password,
+							passwordConfirm,
+							name,
+						},
+						update: (cache, { data }) => {
+							if (data?.register.errors?.length) {
+								let errors = getFormikErrors(data.register.errors);
+								setErrors(errors);
+							}
+
+							if (data?.register.user) {
+								cache.writeQuery({
+									query: MeDocument,
+									data: {
+										__typename: 'Query',
+										me: {
+											...data?.register.user,
+										},
+									},
+								});
+								resetForm();
+								navigation.navigate('Home');
+							}
+						},
+					});
+				}}>
+				{({ handleSubmit }) => {
+					return (
+						<View style={styles.form}>
+							<Text style={styles.title}>Register</Text>
+							<FormInput name='name' label='Name' />
+							<FormInput name='email' label='Email' />
+							<FormInput name='password' label='Password' secureTextEntry />
+							<FormInput
+								name='passwordConfirm'
+								label='Password Confirm'
+								secureTextEntry
+							/>
+							<Button
+								title={loading ? 'Loading...' : 'Register'}
+								onPress={handleSubmit}
+							/>
+						</View>
+					);
+				}}
+			</Formik>
+			<Button
+				title={'To Login Page'}
+				onPress={() => navigation.replace('Login')}
+			/>
+		</SafeAreaView>
+	);
 };
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		padding: 30,
+	},
+	title: {
+		fontSize: 30,
+		textAlign: 'center',
+		paddingVertical: 15,
+		marginBottom: 20,
+	},
+	textInput: {
+		borderWidth: 1,
+		borderColor: 'black',
+		paddingVertical: 4,
+		paddingHorizontal: 8,
+		marginBottom: 20,
+		borderRadius: 3,
+	},
+	form: {
+		marginBottom: 40,
+	},
+});
 
 export default Register;
