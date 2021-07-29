@@ -1990,6 +1990,11 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@shopify/restyle@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@shopify/restyle/-/restyle-1.4.0.tgz#81d1fbfd16bf1688e7638aa53e6a524c623f936c"
+  integrity sha512-wzckvAzDE8Xi39EFAoO0cWpkvWY0sDI5CrxBn7Ae1Xzc9J17/IQKvTU8uxMN32jjE2VPwQ8i0BVuS8lJfIxUcQ==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"

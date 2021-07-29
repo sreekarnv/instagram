@@ -1,11 +1,14 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthScreenProps } from '../navigation/AuthNavigator';
 import { MeDocument, useLoginMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
+import Box from '../components/Box';
+import Text from '../components/Text';
+import theme from '../config/theme';
 
 const Login = ({ navigation }: AuthScreenProps) => {
 	const [login, { loading }] = useLoginMutation();
@@ -45,17 +48,28 @@ const Login = ({ navigation }: AuthScreenProps) => {
 				{({ handleSubmit }) => {
 					return (
 						<>
-							<View style={styles.form}>
-								<Text style={styles.title}>Login</Text>
-
-								<FormInput name='email' label='Email' />
+							<Box marginBottom={'lg'}>
+								<Text
+									color='light'
+									textAlign='center'
+									paddingVertical={'md'}
+									marginBottom='lg'
+									fontSize={25}>
+									Login
+								</Text>
+								<FormInput
+									name='email'
+									label='Email'
+									keyboardType='email-address'
+								/>
 								<FormInput name='password' label='Password' secureTextEntry />
 
 								<Button
+									color={theme.colors.primary}
 									title={loading ? 'Loading...' : 'Login'}
 									onPress={handleSubmit}
 								/>
-							</View>
+							</Box>
 						</>
 					);
 				}}
@@ -72,15 +86,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 30,
-	},
-	title: {
-		fontSize: 30,
-		textAlign: 'center',
-		paddingVertical: 15,
-		marginBottom: 20,
-	},
-	form: {
-		marginBottom: 40,
+		backgroundColor: theme.colors.dark,
 	},
 });
 

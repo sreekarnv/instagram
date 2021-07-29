@@ -1,11 +1,14 @@
 import FormInput from '../components/FormInput';
 import { Formik } from 'formik';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthScreenProps } from '../navigation/AuthNavigator';
 import { MeDocument, useRegisterMutation } from '../graphql/generated';
 import { getFormikErrors } from '../utils/formikFieldError';
+import Box from '../components/Box';
+import Text from '../components/Text';
+import theme from '../config/theme';
 
 const Register = ({ navigation }: AuthScreenProps) => {
 	const [register, { loading }] = useRegisterMutation();
@@ -54,8 +57,15 @@ const Register = ({ navigation }: AuthScreenProps) => {
 				}}>
 				{({ handleSubmit }) => {
 					return (
-						<View style={styles.form}>
-							<Text style={styles.title}>Register</Text>
+						<Box marginBottom={'lg'}>
+							<Text
+								textAlign='center'
+								paddingVertical={'md'}
+								marginBottom='lg'
+								color='light'
+								fontSize={25}>
+								Register
+							</Text>
 							<FormInput name='name' label='Name' />
 							<FormInput name='email' label='Email' />
 							<FormInput name='password' label='Password' secureTextEntry />
@@ -65,10 +75,11 @@ const Register = ({ navigation }: AuthScreenProps) => {
 								secureTextEntry
 							/>
 							<Button
+								color={theme.colors.primary}
 								title={loading ? 'Loading...' : 'Register'}
 								onPress={handleSubmit}
 							/>
-						</View>
+						</Box>
 					);
 				}}
 			</Formik>
@@ -84,6 +95,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 30,
+		backgroundColor: theme.colors.dark,
 	},
 	title: {
 		fontSize: 30,
