@@ -15,6 +15,7 @@ import env from '../config/env';
 export class UserResolver {
 	@Query(() => User, { nullable: true })
 	async me(@Ctx() { req }: Context): Promise<User | undefined> {
+		console.log(req.session);
 		return User.findOne({ id: req.session.userId });
 	}
 
@@ -67,18 +68,15 @@ export class UserResolver {
 	}
 
 	@Mutation(() => Boolean)
-	async logout(@Ctx() { req, res }: Context): Promise<boolean> {
-		return new Promise((resolve) =>
-			req.session.destroy((err) => {
-				res.clearCookie(env.COOKIE_NAME);
-				if (err) {
-					console.log(err);
-					resolve(false);
-					return;
-				}
+	logout(@Ctx() { req, res }: Context): boolean {
+		req.session.destroy((err) => {
+			if (err) {
+				return false;
+			}
+			return null;
+		});
 
-				resolve(true);
-			})
-		);
+		res.clearCookie(env.COOKIE_NAME);
+		return true;
 	}
 }
