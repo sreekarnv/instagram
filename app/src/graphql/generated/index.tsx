@@ -16,6 +16,11 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type CreatePostInputType = {
+  description: Scalars['String'];
+  photo: Scalars['String'];
+};
+
 
 export type FieldError = {
   __typename?: 'FieldError';
@@ -33,6 +38,8 @@ export type Mutation = {
   login: UserResponse;
   register: UserResponse;
   logout: Scalars['Boolean'];
+  createPost: Scalars['Boolean'];
+  deletePost: Scalars['Boolean'];
 };
 
 
@@ -45,9 +52,42 @@ export type MutationRegisterArgs = {
   details: RegisterUserInput;
 };
 
+
+export type MutationCreatePostArgs = {
+  details: CreatePostInputType;
+};
+
+
+export type MutationDeletePostArgs = {
+  id: Scalars['String'];
+};
+
+export type Post = {
+  __typename?: 'Post';
+  id: Scalars['String'];
+  description: Scalars['String'];
+  photo?: Maybe<Scalars['String']>;
+  user: User;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
+  getAllPosts: Array<Post>;
+  getPost?: Maybe<Post>;
+};
+
+
+export type QueryGetAllPostsArgs = {
+  cursor?: Maybe<Scalars['DateTime']>;
+  limit: Scalars['Int'];
+};
+
+
+export type QueryGetPostArgs = {
+  id: Scalars['String'];
 };
 
 export type RegisterUserInput = {
@@ -71,6 +111,24 @@ export type UserResponse = {
   user?: Maybe<User>;
   errors?: Maybe<Array<FieldError>>;
 };
+
+export type GetAllPostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['DateTime']>;
+}>;
+
+
+export type GetAllPostsQuery = (
+  { __typename?: 'Query' }
+  & { getAllPosts: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    ) }
+  )> }
+);
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -134,6 +192,49 @@ export type RegisterMutation = (
 );
 
 
+export const GetAllPostsDocument = gql`
+    query GetAllPosts($limit: Int!, $cursor: DateTime) {
+  getAllPosts(limit: $limit, cursor: $cursor) {
+    id
+    description
+    photo
+    createdAt
+    user {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllPostsQuery__
+ *
+ * To run a query within a React component, call `useGetAllPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllPostsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useGetAllPostsQuery(baseOptions: Apollo.QueryHookOptions<GetAllPostsQuery, GetAllPostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllPostsQuery, GetAllPostsQueryVariables>(GetAllPostsDocument, options);
+      }
+export function useGetAllPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllPostsQuery, GetAllPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllPostsQuery, GetAllPostsQueryVariables>(GetAllPostsDocument, options);
+        }
+export type GetAllPostsQueryHookResult = ReturnType<typeof useGetAllPostsQuery>;
+export type GetAllPostsLazyQueryHookResult = ReturnType<typeof useGetAllPostsLazyQuery>;
+export type GetAllPostsQueryResult = Apollo.QueryResult<GetAllPostsQuery, GetAllPostsQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(details: {email: $email, password: $password}) {

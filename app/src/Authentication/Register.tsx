@@ -3,14 +3,16 @@ import { Formik } from 'formik';
 import React from 'react';
 import { Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthScreenProps } from '../navigation/AuthNavigator';
 import { MeDocument, useRegisterMutation } from '../graphql/generated';
 import { getFormikErrors } from '../utils/formikFieldError';
 import Box from '../components/Box';
 import Text from '../components/Text';
 import theme from '../config/theme';
+import { MainNavigatorProps } from '../navigation/MainNavigator';
 
-const Register = ({ navigation }: AuthScreenProps) => {
+type RegisterProps = MainNavigatorProps;
+
+const Register: React.FC<RegisterProps> = ({ navigation }) => {
 	const [register, { loading }] = useRegisterMutation();
 
 	return (
@@ -50,7 +52,9 @@ const Register = ({ navigation }: AuthScreenProps) => {
 									},
 								});
 								resetForm();
-								navigation.navigate('Home');
+								navigation.navigate('Home', {
+									screen: 'Feed',
+								});
 							}
 						},
 					});
