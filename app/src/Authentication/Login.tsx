@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthScreenProps } from '../navigation/AuthNavigator';
 import { MeDocument, useLoginMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
@@ -9,8 +8,12 @@ import { getFormikErrors } from '../utils/formikFieldError';
 import Box from '../components/Box';
 import Text from '../components/Text';
 import theme from '../config/theme';
+import Button from '../components/Button';
+import { MainNavigatorProps } from '../navigation/MainNavigator';
 
-const Login = ({ navigation }: AuthScreenProps) => {
+type LoginProps = MainNavigatorProps;
+
+const Login: React.FC<LoginProps> = ({ navigation }) => {
 	const [login, { loading }] = useLoginMutation();
 
 	return (
@@ -40,7 +43,9 @@ const Login = ({ navigation }: AuthScreenProps) => {
 									},
 								});
 								resetForm();
-								navigation.navigate('Home');
+								navigation.navigate('Home', {
+									screen: 'Feed',
+								});
 							}
 						},
 					});
@@ -64,20 +69,17 @@ const Login = ({ navigation }: AuthScreenProps) => {
 								/>
 								<FormInput name='password' label='Password' secureTextEntry />
 
-								<Button
-									color={theme.colors.primary}
-									title={loading ? 'Loading...' : 'Login'}
-									onPress={handleSubmit}
-								/>
+								<Button onPress={() => handleSubmit()}>
+									{loading ? 'Loading...' : 'Login'}
+								</Button>
 							</Box>
 						</>
 					);
 				}}
 			</Formik>
-			<Button
-				title={'To Register Page'}
-				onPress={() => navigation.replace('Register')}
-			/>
+			<Button color='danger' onPress={() => navigation.replace('Register')}>
+				To Register Page
+			</Button>
 		</SafeAreaView>
 	);
 };
