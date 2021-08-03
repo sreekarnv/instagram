@@ -77,7 +77,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 					);
 				}}
 			</Formik>
-			<Button color='danger' onPress={() => navigation.replace('Register')}>
+			<Button color='danger' onPress={() => navigation.navigate('Register')}>
 				To Register Page
 			</Button>
 		</SafeAreaView>

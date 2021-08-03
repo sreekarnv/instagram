@@ -1,13 +1,15 @@
 import FormInput from '../components/FormInput';
 import { Formik } from 'formik';
 import React from 'react';
-import { Button, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MeDocument, useRegisterMutation } from '../graphql/generated';
 import { getFormikErrors } from '../utils/formikFieldError';
 import Box from '../components/Box';
 import Text from '../components/Text';
 import theme from '../config/theme';
+import Button from '../components/Button';
+
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
 type RegisterProps = MainNavigatorProps;
@@ -78,19 +80,16 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 								label='Password Confirm'
 								secureTextEntry
 							/>
-							<Button
-								color={theme.colors.primary}
-								title={loading ? 'Loading...' : 'Register'}
-								onPress={handleSubmit}
-							/>
+							<Button onPress={() => handleSubmit()}>
+								{loading ? 'Loading...' : 'Register'}
+							</Button>
 						</Box>
 					);
 				}}
 			</Formik>
-			<Button
-				title={'To Login Page'}
-				onPress={() => navigation.replace('Login')}
-			/>
+			<Button color='danger' onPress={() => navigation.navigate('Login')}>
+				To Login Page
+			</Button>
 		</SafeAreaView>
 	);
 };

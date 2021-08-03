@@ -8,10 +8,12 @@ import {
 	Resolver,
 	Root,
 } from 'type-graphql';
+import { data } from '../data';
 import { Post } from '../entity/Post';
 import { User } from '../entity/User';
 import { CreatePostInputType } from '../typeDefs/post';
 import { Context } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -62,7 +64,7 @@ export class PostResolver {
 		);
 	}
 
-	@Mutation(() => Boolean)
+	@Mutation(() => Post)
 	async createPost(
 		@Ctx() { req, redis }: Context,
 		@Arg('details') { description, photo }: CreatePostInputType
@@ -76,7 +78,7 @@ export class PostResolver {
 
 			redis.set(`post-${post.id}`, JSON.stringify(post));
 
-			return true;
+			return post;
 		} catch (err) {
 			return err;
 		}
@@ -112,5 +114,18 @@ export class PostResolver {
 		}
 
 		return post;
+	}
+
+	@Query(() => Boolean)
+	async insertPost() {
+		const iData = data.map((e) => {
+			return {
+				...e,
+				id: uuidv4(),
+			};
+		});
+
+		await Post.insert(iData);
+		return true;
 	}
 }
