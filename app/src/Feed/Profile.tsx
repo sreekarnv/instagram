@@ -1,71 +1,60 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { useLogoutMutation, useMeQuery } from '../graphql/generated';
-import { useApolloClient } from '@apollo/client';
+import { Subheading, Title } from 'react-native-paper';
+import { useMeQuery } from '../graphql/generated';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
-import Box from '../components/Box';
-import Text from '../components/Text';
-import Button from '../components/Button';
+import Loader from '../components/Loader';
+import { Avatar } from 'react-native-paper';
+import { Feather } from '@expo/vector-icons';
 
-type LogoutProps = MainNavigatorProps;
+type ProfileProps = MainNavigatorProps;
 
-const Logout: React.FC<LogoutProps> = ({ navigation }: any) => {
-	const { data, loading: userLoading } = useMeQuery();
-	const [logout, { loading }] = useLogoutMutation();
-	const apolloClient = useApolloClient();
+const Profile: React.FC<ProfileProps> = () => {
+	const { data, loading } = useMeQuery();
 
-	if (userLoading) {
-		return (
-			<View
-				style={{
-					flex: 1,
-					backgroundColor: '#000',
-					justifyContent: 'center',
-					alignItems: 'center',
-				}}>
-				<Text>Loading...</Text>
-			</View>
-		);
+	if (loading) {
+		return <Loader />;
 	}
 
 	return (
 		<>
-			<View
-				style={{
-					flex: 1,
-					justifyContent: 'center',
-					alignItems: 'center',
-					backgroundColor: '#222',
-				}}>
-				<Box mb='xl'>
-					<Box mb='md'>
-						<Text textAlign='center' color='light50'>
-							Logged In As:
-						</Text>
-					</Box>
-
-					<Text textAlign='center' color='light' fontSize={30}>
-						{data?.me?.name}
-					</Text>
-					<Text color='light50' textAlign='center'>
-						{data?.me?.email}
-					</Text>
-				</Box>
-				<Button
-					onPress={() => {
-						return logout({
-							update: async () => {
-								await apolloClient.resetStore();
-								navigation.replace('Login');
-							},
-						});
-					}}>
-					{loading ? 'Loading...' : 'Logout'}
-				</Button>
+			<View style={styles.root}>
+				<View style={styles.user}>
+					<Avatar.Icon
+						icon={() => {
+							return <Feather name='user' size={35} color='#fff' />;
+						}}
+					/>
+					<View style={styles.userInfo}>
+						<Title>{data?.me?.name}</Title>
+						<Subheading>{data?.me?.email}</Subheading>
+					</View>
+				</View>
 			</View>
 		</>
 	);
 };
 
-export default Logout;
+const styles = StyleSheet.create({
+	root: {
+		flex: 1,
+	},
+	user: {
+		margin: 15,
+		borderRadius: 10,
+		elevation: 5,
+		backgroundColor: '#fff',
+		paddingVertical: 20,
+		paddingHorizontal: 10,
+		flexDirection: 'row',
+	},
+	userInfo: {
+		marginLeft: 15,
+	},
+	logout: {
+		margin: 10,
+	},
+});
+
+export default Profile;

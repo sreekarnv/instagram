@@ -1,17 +1,13 @@
 import { Post, useGetAllPostsQuery } from '../graphql/generated';
 import * as React from 'react';
 import { View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Box from '../components/Box';
-import Text from '../components/Text';
-import theme from '../config/theme';
 import { FlatList } from 'react-native-gesture-handler';
 import PostItem from '../components/PostItem';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
-type HomePageProps = MainNavigatorProps;
+type FeedProps = MainNavigatorProps;
 
-const Feed: React.FC<HomePageProps> = () => {
+const Feed: React.FC<FeedProps> = () => {
 	const { data: posts } = useGetAllPostsQuery({
 		variables: {
 			limit: 10,
@@ -20,31 +16,17 @@ const Feed: React.FC<HomePageProps> = () => {
 
 	return (
 		<>
-			<SafeAreaView
-				style={{
-					backgroundColor: theme.colors.dark,
-					flex: 1,
-					paddingHorizontal: 20,
-					paddingVertical: 10,
-				}}>
-				<Box marginBottom={'md'}>
-					<Text color='light' fontSize={30}>
-						Feed
-					</Text>
-				</Box>
-
-				<View style={{ flex: 1 }}>
-					{posts?.getAllPosts && (
-						<FlatList
-							data={posts?.getAllPosts}
-							renderItem={({ item }: { item: Post }) => {
-								return <PostItem post={item} />;
-							}}
-							keyExtractor={(p) => p.id}
-						/>
-					)}
-				</View>
-			</SafeAreaView>
+			<View style={{ flex: 1 }}>
+				{posts?.getAllPosts && (
+					<FlatList
+						data={posts?.getAllPosts}
+						renderItem={({ item }: { item: Post }) => {
+							return <PostItem post={item} />;
+						}}
+						keyExtractor={(p) => p.id}
+					/>
+				)}
+			</View>
 		</>
 	);
 };

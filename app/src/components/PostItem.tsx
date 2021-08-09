@@ -1,9 +1,8 @@
 import * as React from 'react';
-import Box from './Box';
 import { Post } from '../graphql/generated';
-import Text from './Text';
-import Button from './Button';
-import { Image } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import { Avatar, Paragraph, Subheading } from 'react-native-paper';
+import { Feather } from '@expo/vector-icons';
 
 interface PostProps {
 	post: Post;
@@ -12,37 +11,54 @@ interface PostProps {
 const PostItem: React.FC<PostProps> = ({ post }) => {
 	return (
 		<>
-			<Box
-				borderRadius='sm'
-				backgroundColor='black'
-				marginBottom='md'
-				padding='md'>
-				<Box justifyContent='flex-end' flexDirection='row'>
-					<Text marginBottom='lg' color='light50' fontSize={18}>
-						{post?.user.name}
-					</Text>
-				</Box>
-				<Box marginBottom='md'>
-					<Image
-						style={{
-							height: 300,
-							width: '100%',
+			<View style={styles.root}>
+				<View style={styles.header}>
+					<Avatar.Icon
+						size={35}
+						icon={() => {
+							return <Feather color='white' size={18} name='user' />;
 						}}
-						source={{ uri: post.photo! }}
 					/>
-				</Box>
-				<Text marginBottom='lg' color='light'>
+					<Subheading style={styles.username}>{post?.user.name}</Subheading>
+				</View>
+				<View style={styles.imageContainer}>
+					<Image style={styles.image} source={{ uri: post.photo! }} />
+				</View>
+				<Paragraph style={styles.postDescription}>
 					{post?.description}
-				</Text>
-				<Box flexDirection='row' alignItems='center' justifyContent='flex-end'>
-					<Text color='danger' marginRight='sm'>
-						20
-					</Text>
-					<Button>Like</Button>
-				</Box>
-			</Box>
+				</Paragraph>
+			</View>
 		</>
 	);
 };
+
+const styles = StyleSheet.create({
+	root: {
+		marginBottom: 20,
+	},
+	header: {
+		alignItems: 'center',
+		flexDirection: 'row',
+		paddingVertical: 20,
+		paddingHorizontal: 10,
+	},
+	username: {
+		color: 'black',
+		fontSize: 14,
+		marginLeft: 10,
+	},
+	imageContainer: {
+		marginBottom: 20,
+	},
+	image: {
+		height: 300,
+		width: '100%',
+	},
+	postDescription: {
+		marginBottom: 20,
+		color: 'black',
+		padding: 10,
+	},
+});
 
 export default PostItem;

@@ -1,13 +1,9 @@
-import { Formik, getActiveElement } from 'formik';
+import { Formik } from 'formik';
 import * as React from 'react';
-import Box from '../components/Box';
-import Button from '../components/Button';
+import { View } from 'react-native';
+import { Button } from 'react-native-paper';
 import FormInput from '../components/FormInput';
-import {
-	GetAllPostsDocument,
-	Post,
-	useCreatePostMutation,
-} from '../graphql/generated';
+import { useCreatePostMutation } from '../graphql/generated';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
 type CreatePostProps = MainNavigatorProps;
@@ -17,11 +13,12 @@ const CreatePost: React.FC<CreatePostProps> = ({ navigation }) => {
 
 	return (
 		<>
-			<Box
-				backgroundColor='dark'
-				height='100%'
-				padding='lg'
-				justifyContent='center'>
+			<View
+				style={{
+					height: '100%',
+					padding: 25,
+					justifyContent: 'center',
+				}}>
 				<Formik
 					initialValues={{
 						description: '',
@@ -43,15 +40,15 @@ const CreatePost: React.FC<CreatePostProps> = ({ navigation }) => {
 					{({ handleSubmit }) => {
 						return (
 							<>
-								<FormInput name='description' label='Description' />
-								<Button onPress={() => handleSubmit()}>
+								<FormInput multiline name='description' label='Description' />
+								<Button mode='outlined' onPress={() => handleSubmit()}>
 									{loading ? 'Loading....' : 'Create Post'}
 								</Button>
 							</>
 						);
 					}}
 				</Formik>
-			</Box>
+			</View>
 		</>
 	);
 };

@@ -1,15 +1,10 @@
-import FormInput from '../components/FormInput';
-import { Formik } from 'formik';
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
 import { MeDocument, useRegisterMutation } from '../graphql/generated';
+import { Formik } from 'formik';
+import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
-import Box from '../components/Box';
-import Text from '../components/Text';
-import theme from '../config/theme';
-import Button from '../components/Button';
-
+import { Headline, Button } from 'react-native-paper';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
 type RegisterProps = MainNavigatorProps;
@@ -18,7 +13,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 	const [register, { loading }] = useRegisterMutation();
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<View style={styles.container}>
 			<Formik
 				initialValues={{
 					name: '',
@@ -63,15 +58,8 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 				}}>
 				{({ handleSubmit }) => {
 					return (
-						<Box marginBottom={'lg'}>
-							<Text
-								textAlign='center'
-								paddingVertical={'md'}
-								marginBottom='lg'
-								color='light'
-								fontSize={25}>
-								Register
-							</Text>
+						<View style={styles.form}>
+							<Headline style={styles.title}>Register</Headline>
 							<FormInput name='name' label='Name' />
 							<FormInput name='email' label='Email' />
 							<FormInput name='password' label='Password' secureTextEntry />
@@ -80,42 +68,34 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 								label='Password Confirm'
 								secureTextEntry
 							/>
-							<Button onPress={() => handleSubmit()}>
-								{loading ? 'Loading...' : 'Register'}
+							<Button
+								mode='contained'
+								loading={loading}
+								onPress={() => handleSubmit()}>
+								Register
 							</Button>
-						</Box>
+						</View>
 					);
 				}}
 			</Formik>
-			<Button color='danger' onPress={() => navigation.navigate('Login')}>
-				To Login Page
+			<Button mode='outlined' onPress={() => navigation.navigate('Login')}>
+				Login
 			</Button>
-		</SafeAreaView>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		padding: 30,
-		backgroundColor: theme.colors.dark,
+		padding: 20,
 	},
 	title: {
-		fontSize: 30,
+		fontSize: 25,
 		textAlign: 'center',
-		paddingVertical: 15,
 		marginBottom: 20,
-	},
-	textInput: {
-		borderWidth: 1,
-		borderColor: 'black',
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		marginBottom: 20,
-		borderRadius: 3,
 	},
 	form: {
-		marginBottom: 40,
+		marginBottom: 30,
 	},
 });
 
