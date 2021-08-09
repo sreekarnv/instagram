@@ -1,14 +1,10 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
 import { MeDocument, useLoginMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
-import Box from '../components/Box';
-import Text from '../components/Text';
-import theme from '../config/theme';
-import Button from '../components/Button';
+import { Headline, Button } from 'react-native-paper';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
 type LoginProps = MainNavigatorProps;
@@ -17,7 +13,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 	const [login, { loading }] = useLoginMutation();
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<View style={styles.container}>
 			<Formik
 				initialValues={{ email: '', password: '' }}
 				onSubmit={({ email, password }, { setErrors, resetForm }) => {
@@ -53,42 +49,54 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 				{({ handleSubmit }) => {
 					return (
 						<>
-							<Box marginBottom={'lg'}>
-								<Text
-									color='light'
-									textAlign='center'
-									paddingVertical={'md'}
-									marginBottom='lg'
-									fontSize={25}>
+							<View>
+								<Headline
+									style={{
+										textAlign: 'center',
+										marginBottom: 20,
+										textTransform: 'uppercase',
+									}}>
 									Login
-								</Text>
+								</Headline>
 								<FormInput
 									name='email'
 									label='Email'
 									keyboardType='email-address'
 								/>
-								<FormInput name='password' label='Password' secureTextEntry />
+								<FormInput
+									name='password'
+									label='Password'
+									secureTextEntry={true}
+								/>
 
-								<Button onPress={() => handleSubmit()}>
-									{loading ? 'Loading...' : 'Login'}
+								<Button
+									mode='contained'
+									loading={loading}
+									onPress={() => handleSubmit()}>
+									Login
 								</Button>
-							</Box>
+							</View>
+
+							<Button
+								style={{
+									marginTop: 40,
+								}}
+								mode='outlined'
+								onPress={() => navigation.navigate('Register')}>
+								Register
+							</Button>
 						</>
 					);
 				}}
 			</Formik>
-			<Button color='danger' onPress={() => navigation.replace('Register')}>
-				To Register Page
-			</Button>
-		</SafeAreaView>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		padding: 30,
-		backgroundColor: theme.colors.dark,
+		padding: 20,
+		justifyContent: 'center',
 	},
 });
 

@@ -37,6 +37,16 @@ export class UserResolver {
 		return { user };
 	}
 
+	// @Query(() => String)
+	// async getUserIds() {
+	// 	let str = '';
+	// 	const users = await User.find({});
+	// 	users.forEach((e) => {
+	// 		str += `${e.id}, `;
+	// 	});
+	// 	return str;
+	// }
+
 	@Mutation(() => UserResponse)
 	async register(
 		@Arg('details') details: RegisterUserInput,

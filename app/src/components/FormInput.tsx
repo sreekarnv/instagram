@@ -1,13 +1,13 @@
 import { useField } from 'formik';
 import * as React from 'react';
-import { StyleSheet, Text, TextInputProps, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
-import theme from '../config/theme';
+import { TextInput } from 'react-native-paper';
+import { StyleSheet, Text, View, TextInputProps } from 'react-native';
 
 interface FormInputProps {
 	name: string;
 	label: string;
 	secureTextEntry?: boolean;
+	multiline?: boolean;
 	keyboardType?: TextInputProps['keyboardType'];
 }
 
@@ -15,6 +15,7 @@ const FormInput: React.FC<FormInputProps> = ({
 	label,
 	keyboardType = 'default',
 	secureTextEntry = false,
+	multiline = false,
 	...props
 }) => {
 	const [{ value }, { error }, { setValue }] = useField<any>(props);
@@ -23,10 +24,10 @@ const FormInput: React.FC<FormInputProps> = ({
 		<>
 			<View style={{ marginBottom: 20 }}>
 				<TextInput
-					placeholder={label}
-					style={styles.textInput}
+					multiline={multiline}
+					mode='outlined'
+					label={label}
 					value={value}
-					placeholderTextColor={theme.colors.light50}
 					secureTextEntry={secureTextEntry}
 					keyboardType={keyboardType}
 					onChangeText={(t) => {
@@ -40,16 +41,8 @@ const FormInput: React.FC<FormInputProps> = ({
 };
 
 const styles = StyleSheet.create({
-	textInput: {
-		borderWidth: 1,
-		borderColor: theme.colors.light,
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		borderRadius: 3,
-		color: theme.colors.light,
-	},
 	error: {
-		color: theme.colors.danger,
+		color: 'red',
 		textTransform: 'capitalize',
 	},
 });
