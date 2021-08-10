@@ -15,8 +15,11 @@ import env from '../config/env';
 export class UserResolver {
 	@Query(() => User, { nullable: true })
 	async me(@Ctx() { req }: Context): Promise<User | undefined> {
-		console.log(req.session);
-		return User.findOne({ id: req.session.userId });
+		if (req.session.userId) {
+			return User.findOne({ id: req.session.userId });
+		}
+
+		return undefined;
 	}
 
 	@Mutation(() => UserResponse)
@@ -36,16 +39,6 @@ export class UserResolver {
 
 		return { user };
 	}
-
-	// @Query(() => String)
-	// async getUserIds() {
-	// 	let str = '';
-	// 	const users = await User.find({});
-	// 	users.forEach((e) => {
-	// 		str += `${e.id}, `;
-	// 	});
-	// 	return str;
-	// }
 
 	@Mutation(() => UserResponse)
 	async register(
