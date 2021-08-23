@@ -41,14 +41,17 @@ const MainNavigator = () => {
 
 	return (
 		<MainStackNavigator.Navigator
-			screenOptions={{
-				title: 'Instagram',
-				headerLeft: () => null,
-			}}
 			initialRouteName={data?.me?.id ? 'Home' : 'Login'}>
 			<MainStackNavigator.Screen name='Login' component={Login} />
 			<MainStackNavigator.Screen name='Register' component={Register} />
-			<MainStackNavigator.Screen name='Home' component={HomeNavigator} />
+			<MainStackNavigator.Screen
+				options={{
+					title: 'Instagram',
+					headerLeft: () => null,
+				}}
+				name='Home'
+				component={HomeNavigator}
+			/>
 		</MainStackNavigator.Navigator>
 	);
 };

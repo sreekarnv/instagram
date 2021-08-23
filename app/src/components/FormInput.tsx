@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 import * as React from 'react';
-import { TextInput } from 'react-native-paper';
-import { StyleSheet, Text, View, TextInputProps } from 'react-native';
+import { TextInput, Paragraph, useTheme } from 'react-native-paper';
+import { StyleSheet, View, TextInputProps } from 'react-native';
 
 interface FormInputProps {
 	name: string;
@@ -18,6 +18,7 @@ const FormInput: React.FC<FormInputProps> = ({
 	multiline = false,
 	...props
 }) => {
+	const theme = useTheme();
 	const [{ value }, { error }, { setValue }] = useField<any>(props);
 
 	return (
@@ -33,8 +34,13 @@ const FormInput: React.FC<FormInputProps> = ({
 					onChangeText={(t) => {
 						setValue(t);
 					}}
+					error={!!error}
 				/>
-				{error && <Text style={styles.error}>{error}</Text>}
+				{error && (
+					<Paragraph style={[styles.error, { color: theme.colors.error }]}>
+						{error}
+					</Paragraph>
+				)}
 			</View>
 		</>
 	);
@@ -42,7 +48,6 @@ const FormInput: React.FC<FormInputProps> = ({
 
 const styles = StyleSheet.create({
 	error: {
-		color: 'red',
 		textTransform: 'capitalize',
 	},
 });

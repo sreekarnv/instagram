@@ -4,7 +4,7 @@ import { MeDocument, useLoginMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
-import { Headline, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
 type LoginProps = MainNavigatorProps;
@@ -50,24 +50,13 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 					return (
 						<>
 							<View>
-								<Headline
-									style={{
-										textAlign: 'center',
-										marginBottom: 20,
-										textTransform: 'uppercase',
-									}}>
-									Login
-								</Headline>
 								<FormInput
 									name='email'
 									label='Email'
 									keyboardType='email-address'
 								/>
-								<FormInput
-									name='password'
-									label='Password'
-									secureTextEntry={true}
-								/>
+
+								<FormInput name='password' label='Password' secureTextEntry />
 
 								<Button
 									mode='contained'

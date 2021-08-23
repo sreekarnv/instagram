@@ -4,7 +4,7 @@ import { MeDocument, useRegisterMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
-import { Headline, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 
 type RegisterProps = MainNavigatorProps;
@@ -59,7 +59,6 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 				{({ handleSubmit }) => {
 					return (
 						<View style={styles.form}>
-							<Headline style={styles.title}>Register</Headline>
 							<FormInput name='name' label='Name' />
 							<FormInput name='email' label='Email' />
 							<FormInput name='password' label='Password' secureTextEntry />
@@ -88,11 +87,6 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
 	container: {
 		padding: 20,
-	},
-	title: {
-		fontSize: 25,
-		textAlign: 'center',
-		marginBottom: 20,
 	},
 	form: {
 		marginBottom: 30,

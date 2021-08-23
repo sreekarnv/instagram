@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-
-import { Button, Subheading, Title } from 'react-native-paper';
-import { useMeQuery } from '../graphql/generated';
+import { Button, Subheading, Title, Avatar } from 'react-native-paper';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 import Loader from '../components/Loader';
-import { useLogoutMutation } from '../graphql/generated';
-import { Avatar } from 'react-native-paper';
+import { useLogoutMutation, useMeQuery } from '../graphql/generated';
 import { useApolloClient } from '@apollo/client';
 import { Feather } from '@expo/vector-icons';
 
