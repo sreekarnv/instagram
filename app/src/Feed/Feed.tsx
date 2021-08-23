@@ -14,6 +14,8 @@ const Feed: React.FC<FeedProps> = () => {
 		},
 	});
 
+	console.log(posts?.getAllPosts);
+
 	return (
 		<>
 			<View style={{ flex: 1 }}>

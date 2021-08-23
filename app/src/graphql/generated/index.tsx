@@ -40,6 +40,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   createPost: Post;
   deletePost: Scalars['Boolean'];
+  likePost: Scalars['Boolean'];
 };
 
 
@@ -62,6 +63,11 @@ export type MutationDeletePostArgs = {
   id: Scalars['String'];
 };
 
+
+export type MutationLikePostArgs = {
+  postId: Scalars['String'];
+};
+
 export type Post = {
   __typename?: 'Post';
   id: Scalars['String'];
@@ -70,6 +76,8 @@ export type Post = {
   user: User;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  liked: Scalars['Boolean'];
+  numLikes: Scalars['Float'];
 };
 
 export type Query = {
@@ -141,12 +149,22 @@ export type GetAllPostsQuery = (
   { __typename?: 'Query' }
   & { getAllPosts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt'>
+    & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt' | 'numLikes' | 'liked'>
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name'>
     ) }
   )> }
+);
+
+export type LikePostMutationVariables = Exact<{
+  postId: Scalars['String'];
+}>;
+
+
+export type LikePostMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'likePost'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -264,6 +282,8 @@ export const GetAllPostsDocument = gql`
       id
       name
     }
+    numLikes
+    liked
   }
 }
     `;
@@ -296,6 +316,37 @@ export function useGetAllPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllPostsQueryHookResult = ReturnType<typeof useGetAllPostsQuery>;
 export type GetAllPostsLazyQueryHookResult = ReturnType<typeof useGetAllPostsLazyQuery>;
 export type GetAllPostsQueryResult = Apollo.QueryResult<GetAllPostsQuery, GetAllPostsQueryVariables>;
+export const LikePostDocument = gql`
+    mutation LikePost($postId: String!) {
+  likePost(postId: $postId)
+}
+    `;
+export type LikePostMutationFn = Apollo.MutationFunction<LikePostMutation, LikePostMutationVariables>;
+
+/**
+ * __useLikePostMutation__
+ *
+ * To run a mutation, you first call `useLikePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likePostMutation, { data, loading, error }] = useLikePostMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useLikePostMutation(baseOptions?: Apollo.MutationHookOptions<LikePostMutation, LikePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikePostMutation, LikePostMutationVariables>(LikePostDocument, options);
+      }
+export type LikePostMutationHookResult = ReturnType<typeof useLikePostMutation>;
+export type LikePostMutationResult = Apollo.MutationResult<LikePostMutation>;
+export type LikePostMutationOptions = Apollo.BaseMutationOptions<LikePostMutation, LikePostMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(details: {email: $email, password: $password}) {

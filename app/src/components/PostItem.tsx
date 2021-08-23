@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { Post } from '../graphql/generated';
-import { Image, StyleSheet, View } from 'react-native';
-import { Avatar, Paragraph, Subheading } from 'react-native-paper';
-import { Feather } from '@expo/vector-icons';
+import { Post, useLikePostMutation } from '../graphql/generated';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Avatar, Paragraph, Subheading, Text } from 'react-native-paper';
+import { AntDesign, Feather } from '@expo/vector-icons';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface PostProps {
 	post: Post;
 }
 
 const PostItem: React.FC<PostProps> = ({ post }) => {
+	const [likePost] = useLikePostMutation();
+
 	return (
-		<>
+		<TouchableWithoutFeedback>
 			<View style={styles.root}>
 				<View style={styles.header}>
 					<Avatar.Icon
@@ -24,11 +27,33 @@ const PostItem: React.FC<PostProps> = ({ post }) => {
 				<View style={styles.imageContainer}>
 					<Image style={styles.image} source={{ uri: post.photo! }} />
 				</View>
+				<View style={styles.cta}>
+					<TouchableOpacity
+						onPress={() =>
+							likePost({
+								variables: { postId: post.id },
+								update: async (cache) => {
+									await cache.reset();
+								},
+							})
+						}
+						style={styles.iconBtn}>
+						<AntDesign
+							color={post.liked ? 'red' : 'black'}
+							name={post.liked ? 'heart' : 'hearto'}
+							size={25}
+						/>
+						<Text
+							style={{ marginLeft: 10, color: post.liked ? 'red' : 'black' }}>
+							{post.numLikes}
+						</Text>
+					</TouchableOpacity>
+				</View>
 				<Paragraph style={styles.postDescription}>
 					{post?.description}
 				</Paragraph>
 			</View>
-		</>
+		</TouchableWithoutFeedback>
 	);
 };
 
@@ -58,6 +83,16 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		color: 'black',
 		padding: 10,
+	},
+	cta: {
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+		paddingHorizontal: 2,
+	},
+	iconBtn: {
+		marginHorizontal: 10,
+		flexDirection: 'row',
+		alignItems: 'center',
 	},
 });
 

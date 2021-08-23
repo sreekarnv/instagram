@@ -8,17 +8,46 @@ import {
 	Resolver,
 	Root,
 } from 'type-graphql';
-import { data } from '../data';
 import { Post } from '../entity/Post';
 import { User } from '../entity/User';
 import { CreatePostInputType } from '../typeDefs/post';
 import { Context } from '../types';
+import { Likes } from '../entity/Likes';
 import { v4 as uuidv4 } from 'uuid';
+import { getConnection } from 'typeorm';
 
 @Resolver(() => Post)
 export class PostResolver {
+	@FieldResolver(() => Boolean)
+	async liked(
+		@Root() post: Post,
+		@Ctx() { req, likeLoader }: Context
+	): Promise<boolean> {
+		const like = await likeLoader.load({
+			postId: post.id,
+			userId: req.session.userId!,
+		});
+
+		return !!like;
+	}
+
+	@FieldResolver(() => Number)
+	async numLikes(
+		@Root() post: Post,
+		@Ctx() { numLikesLoader }: Context
+	): Promise<number> {
+		const likes = await numLikesLoader.load({
+			postId: post.id,
+		});
+
+		return likes?.length || 0;
+	}
+
 	@FieldResolver(() => User)
-	async user(@Root() post: Post, @Ctx() { userLoader, redis }: Context) {
+	async user(
+		@Root() post: Post,
+		@Ctx() { userLoader, redis }: Context
+	): Promise<User> {
 		let userData = (await redis.get(`user-${post.userId}`)) as any;
 		let user;
 
@@ -39,7 +68,7 @@ export class PostResolver {
 		@Arg('limit', () => Int) givenLimit: number,
 		@Arg('cursor', () => Date, { nullable: true }) cursor: number
 	): Promise<Post[]> {
-		const limit = Math.min(givenLimit, 10);
+		const limit = Math.min(givenLimit, 20);
 		let query = `
 			ORDER BY "createdAt" DESC
 		 	LIMIT $1
@@ -116,16 +145,39 @@ export class PostResolver {
 		return post;
 	}
 
-	@Query(() => Boolean)
-	async insertPost() {
-		const iData = data.map((e) => {
-			return {
-				...e,
-				id: uuidv4(),
-			};
+	@Mutation(() => Boolean)
+	async likePost(@Ctx() { req }: Context, @Arg('postId') postId: string) {
+		getConnection().transaction(async (t) => {
+			let likedPostArr = await t.query(
+				`
+				SELECT * FROM "likes"
+				WHERE "userId" = $1 AND "postId" = $2 
+				LIMIT 1	
+			`,
+				[req.session.userId, postId]
+			);
+
+			let likedPost = likedPostArr[0];
+
+			if (!likedPost) {
+				likedPost = await t.query(
+					`
+					INSERT INTO "likes" (id, "userId", "postId")
+					values ($1, $2, $3)
+				`,
+					[uuidv4(), req.session.userId, postId]
+				);
+			} else {
+				Likes.query(
+					`
+					DELETE FROM "likes"
+					WHERE "userId" = $1 AND "postId" = $2 
+				`,
+					[req.session.userId, postId]
+				);
+			}
 		});
 
-		await Post.insert(iData);
 		return true;
 	}
 }

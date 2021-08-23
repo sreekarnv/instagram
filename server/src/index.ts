@@ -12,8 +12,10 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { PostResolver } from './resolvers/PostResolver';
 import userLoader from './dataloaders/userLoader';
+import { likeLoader, numLikesLoader } from './dataloaders/likeLoader';
 import Redis from 'ioredis';
 import connectRedis from 'connect-redis';
+import { Likes } from './entity/Likes';
 
 console.log(`NODE_ENV=${env.NODE_ENV}`);
 const PORT = env.PORT || 4000;
@@ -25,9 +27,13 @@ const app = express();
 		await createConnection({
 			type: 'postgres',
 			url: env.DATABASE_URL,
-			entities: [User, Post],
+			entities: [User, Post, Likes],
 			synchronize: env.NODE_ENV === 'development',
 			logging: env.NODE_ENV === 'development',
+			migrations: ['./migration/*.ts'],
+			cli: {
+				migrationsDir: 'migration',
+			},
 		});
 
 		const redisClient = new Redis();
@@ -65,6 +71,8 @@ const app = express();
 				res,
 				redis: redisClient,
 				userLoader: userLoader(),
+				likeLoader: likeLoader(),
+				numLikesLoader: numLikesLoader(),
 			}),
 		});
 

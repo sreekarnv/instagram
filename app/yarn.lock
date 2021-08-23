@@ -1975,18 +1975,6 @@
     query-string "^6.13.6"
     react-is "^16.13.0"
 
-"@react-navigation/elements@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.0.1.tgz#effcdb59aa5cf64445ff2ca7f50ee35df484fa72"
-  integrity sha512-KU6DPqmFmD4E+AwXOBzrqVBYG1Gd8HzPfbCk1PGzUjIiQOg6xv1pyfJ/d2x6aEOzxX5jtuNVCx6S553ZLkJP9Q==
-
-"@react-navigation/material-bottom-tabs@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/material-bottom-tabs/-/material-bottom-tabs-6.0.1.tgz#7744ee854f89924f13e37f948edb515bfe558391"
-  integrity sha512-oag2PRWN6rNEd3NojoVuUyjdgHWig4fVKXkX7v/T2GVGG9HkZzVaXgEDirM3TV90mrIqd3yKZGRhHB/nvk+4cw==
-  dependencies:
-    "@react-navigation/elements" "^1.0.1"
-
 "@react-navigation/native@^5.9.4":
   version "5.9.4"
   resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-5.9.4.tgz#414c044423c58aa1cdde1b6494309e0b51da08b8"
@@ -2105,21 +2093,6 @@
   version "15.7.4"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
-
-"@types/react-native-vector-icons@^6.4.8":
-  version "6.4.8"
-  resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.8.tgz#7dd9740f36a71e98c484b9ea12155940c85cedc2"
-  integrity sha512-ImqhwVPHtcWrfwaS4vVrnN/C1mY50+Gjer4wMltUJlkt9pTJ5WXCyn8VFPmxC5h8Zy0DBN2tYdusBZ2xJP14OA==
-  dependencies:
-    "@types/react" "*"
-    "@types/react-native" "*"
-
-"@types/react-native@*":
-  version "0.64.12"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.64.12.tgz#1c6a3226c26d7a5949cdf8878e6cfe95fe0951d6"
-  integrity sha512-sw6WGSaL219zqrgdb4kQUtFB9iGXC/LmecLZ+UUWEgwYvD0YH81FqWYmONa2HuTkOFAsxu2bK4DspkWRUHIABQ==
-  dependencies:
-    "@types/react" "*"
 
 "@types/react-native@~0.63.2":
   version "0.63.52"
