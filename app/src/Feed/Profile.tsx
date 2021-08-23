@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { Subheading, Title } from 'react-native-paper';
+import { Button, Subheading, Title } from 'react-native-paper';
 import { useMeQuery } from '../graphql/generated';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 import Loader from '../components/Loader';
+import { useLogoutMutation } from '../graphql/generated';
 import { Avatar } from 'react-native-paper';
+import { useApolloClient } from '@apollo/client';
 import { Feather } from '@expo/vector-icons';
 
 type ProfileProps = MainNavigatorProps;
 
-const Profile: React.FC<ProfileProps> = () => {
+const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 	const { data, loading } = useMeQuery();
+	const [logout] = useLogoutMutation();
+	const apolloClient = useApolloClient();
 
 	if (loading) {
 		return <Loader />;
@@ -30,6 +34,20 @@ const Profile: React.FC<ProfileProps> = () => {
 						<Title>{data?.me?.name}</Title>
 						<Subheading>{data?.me?.email}</Subheading>
 					</View>
+				</View>
+				<View style={styles.logout}>
+					<Button
+						onPress={async () => {
+							logout({
+								update: async () => {
+									await apolloClient.resetStore();
+									navigation.replace('Login');
+								},
+							});
+						}}
+						mode='contained'>
+						Logout
+					</Button>
 				</View>
 			</View>
 		</>
@@ -53,7 +71,7 @@ const styles = StyleSheet.create({
 		marginLeft: 15,
 	},
 	logout: {
-		margin: 10,
+		paddingHorizontal: 15,
 	},
 });
 

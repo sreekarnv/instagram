@@ -10,11 +10,9 @@ type FeedProps = MainNavigatorProps;
 const Feed: React.FC<FeedProps> = () => {
 	const { data: posts } = useGetAllPostsQuery({
 		variables: {
-			limit: 10,
+			limit: 8,
 		},
 	});
-
-	console.log(posts?.getAllPosts);
 
 	return (
 		<>
