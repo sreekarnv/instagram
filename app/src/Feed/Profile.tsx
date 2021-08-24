@@ -1,11 +1,24 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Subheading, Title, Avatar } from 'react-native-paper';
+import {
+	Button,
+	Subheading,
+	Title,
+	Avatar,
+	Paragraph,
+} from 'react-native-paper';
 import { MainNavigatorProps } from '../navigation/MainNavigator';
 import Loader from '../components/Loader';
-import { useLogoutMutation, useMeQuery } from '../graphql/generated';
+import {
+	Post,
+	useGetUserPostsQuery,
+	useLogoutMutation,
+	useMeQuery,
+} from '../graphql/generated';
 import { useApolloClient } from '@apollo/client';
 import { Feather } from '@expo/vector-icons';
+import { FlatList } from 'react-native-gesture-handler';
+import PostItem from '../components/PostItem';
 
 type ProfileProps = MainNavigatorProps;
 
@@ -13,6 +26,11 @@ const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 	const { data, loading } = useMeQuery();
 	const [logout] = useLogoutMutation();
 	const apolloClient = useApolloClient();
+	const { data: posts, loading: postsLoading } = useGetUserPostsQuery({
+		variables: {
+			limit: 10,
+		},
+	});
 
 	if (loading) {
 		return <Loader />;
@@ -46,6 +64,22 @@ const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 						Logout
 					</Button>
 				</View>
+				{postsLoading && (
+					<View>
+						<Paragraph>Loading...</Paragraph>
+					</View>
+				)}
+				<View style={{ flex: 1 }}>
+					{posts?.getUserPosts && (
+						<FlatList
+							data={posts?.getUserPosts}
+							renderItem={({ item }: { item: Post }) => {
+								return <PostItem post={item} />;
+							}}
+							keyExtractor={(p) => p.id}
+						/>
+					)}
+				</View>
 			</View>
 		</>
 	);
@@ -69,6 +103,7 @@ const styles = StyleSheet.create({
 	},
 	logout: {
 		paddingHorizontal: 15,
+		paddingVertical: 10,
 	},
 });
 

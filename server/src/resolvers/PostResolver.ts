@@ -93,6 +93,38 @@ export class PostResolver {
 		);
 	}
 
+	@Query(() => [Post])
+	async getUserPosts(
+		@Ctx() { req }: Context,
+		@Arg('limit', () => Int) givenLimit: number,
+		@Arg('cursor', () => Date, { nullable: true }) cursor: number
+	) {
+		const limit = Math.min(givenLimit, 20);
+		let query = `
+			WHERE "userId" = $1
+			ORDER BY "createdAt" DESC
+		 	LIMIT $2
+			`;
+
+		let params = [req.session.userId, limit];
+		if (cursor) {
+			query = `
+				WHERE "createdAt" < $1 AND "userId" = $2
+				ORDER BY "createdAt" DESC
+				LIMIT $3
+			`;
+			params = [cursor, req.session.userId, limit];
+		}
+
+		return await Post.query(
+			`
+			SELECT * FROM "post"
+			${query}
+		`,
+			[...params]
+		);
+	}
+
 	@Mutation(() => Post)
 	async createPost(
 		@Ctx() { req, redis }: Context,

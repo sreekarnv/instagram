@@ -1,0 +1,14 @@
+query GetUserPosts($limit: Int!, $cursor: DateTime) {
+	getUserPosts(limit: $limit, cursor: $cursor) {
+		id
+		description
+		photo
+		createdAt
+		user {
+			id
+			name
+		}
+		numLikes
+		liked
+	}
+}
