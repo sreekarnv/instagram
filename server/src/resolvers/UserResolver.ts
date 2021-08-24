@@ -6,6 +6,7 @@ import { User } from '../entity/User';
 import {
 	LoginUserInput,
 	RegisterUserInput,
+	UpdateProfileInputType,
 	UserResponse,
 } from '../typeDefs/user';
 import { handleLoginErrors } from '../validation/userValidation';
@@ -80,6 +81,15 @@ export class UserResolver {
 		});
 
 		res.clearCookie(env.COOKIE_NAME);
+		return true;
+	}
+
+	@Mutation(() => Boolean)
+	async updateProfile(
+		@Arg('details') { name, email }: UpdateProfileInputType,
+		@Ctx() { req }: Context
+	): Promise<Boolean> {
+		await User.update({ id: req.session.userId }, { name, email });
 		return true;
 	}
 }

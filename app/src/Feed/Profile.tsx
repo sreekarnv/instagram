@@ -52,6 +52,7 @@ const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 				</View>
 				<View style={styles.logout}>
 					<Button
+						style={{ marginBottom: 20 }}
 						onPress={async () => {
 							logout({
 								update: async () => {

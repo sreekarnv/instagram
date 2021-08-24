@@ -16,6 +16,7 @@ export type AppTabsParamList = {
 	Profile: undefined;
 	CreatePost: undefined;
 	Logout: undefined;
+	EditProfile: undefined;
 };
 
 const Tab = createBottomTabNavigator<AppTabsParamList>();

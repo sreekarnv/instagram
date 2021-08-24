@@ -34,3 +34,12 @@ export class UserResponse {
 	@Field(() => [FieldError], { nullable: true })
 	errors?: FieldError[];
 }
+
+@InputType('UpdateProfileInputType')
+export class UpdateProfileInputType {
+	@Field()
+	email!: string;
+
+	@Field()
+	name!: string;
+}
