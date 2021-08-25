@@ -4,11 +4,8 @@ import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import FormInput from '../components/FormInput';
 import { useCreatePostMutation } from '../graphql/generated';
-import { MainNavigatorProps } from '../navigation/MainNavigator';
 
-type CreatePostProps = MainNavigatorProps;
-
-const CreatePost: React.FC<CreatePostProps> = ({ navigation }) => {
+const CreatePost: React.FC = () => {
 	const [createPost, { loading }] = useCreatePostMutation();
 
 	return (
@@ -31,9 +28,6 @@ const CreatePost: React.FC<CreatePostProps> = ({ navigation }) => {
 							},
 							update: () => {
 								resetForm();
-								navigation.navigate('Home', {
-									screen: 'Feed',
-								});
 							},
 						});
 					}}>

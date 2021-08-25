@@ -5,9 +5,9 @@ import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
 import { Button } from 'react-native-paper';
-import { MainNavigatorProps } from '../navigation/MainNavigator';
+import { AuthStackNavProps } from '../navigation/types';
 
-type LoginProps = MainNavigatorProps;
+type LoginProps = AuthStackNavProps<'Login'>;
 
 const Login: React.FC<LoginProps> = ({ navigation }) => {
 	const [login, { loading }] = useLoginMutation();
@@ -39,9 +39,6 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 									},
 								});
 								resetForm();
-								navigation.navigate('Home', {
-									screen: 'Feed',
-								});
 							}
 						},
 					});

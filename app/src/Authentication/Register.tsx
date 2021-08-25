@@ -5,9 +5,9 @@ import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
 import { Button } from 'react-native-paper';
-import { MainNavigatorProps } from '../navigation/MainNavigator';
+import { AuthStackNavProps } from '../navigation/types';
 
-type RegisterProps = MainNavigatorProps;
+type RegisterProps = AuthStackNavProps<'Register'>;
 
 const Register: React.FC<RegisterProps> = ({ navigation }) => {
 	const [register, { loading }] = useRegisterMutation();
@@ -49,9 +49,6 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 									},
 								});
 								resetForm();
-								navigation.navigate('Home', {
-									screen: 'Feed',
-								});
 							}
 						},
 					});

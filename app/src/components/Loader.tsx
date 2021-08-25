@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 
 interface LoaderProps {}
 
 const Loader: React.FC<LoaderProps> = ({}) => {
 	return (
 		<View style={styles.root}>
-			<Text>Loading</Text>
+			<ActivityIndicator />
 		</View>
 	);
 };

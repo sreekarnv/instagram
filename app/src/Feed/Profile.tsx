@@ -1,13 +1,6 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import {
-	Button,
-	Subheading,
-	Title,
-	Avatar,
-	Paragraph,
-} from 'react-native-paper';
-import { MainNavigatorProps } from '../navigation/MainNavigator';
+import { Button, Subheading, Title, Avatar } from 'react-native-paper';
 import Loader from '../components/Loader';
 import {
 	Post,
@@ -20,11 +13,9 @@ import { Feather } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
 import PostItem from '../components/PostItem';
 
-type ProfileProps = MainNavigatorProps;
-
-const Profile: React.FC<ProfileProps> = ({ navigation }) => {
+const Profile: React.FC = () => {
 	const { data, loading } = useMeQuery();
-	const [logout] = useLogoutMutation();
+	const [logout, { loading: logoutLoading }] = useLogoutMutation();
 	const apolloClient = useApolloClient();
 	const { data: posts, loading: postsLoading } = useGetUserPostsQuery({
 		variables: {
@@ -32,7 +23,7 @@ const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 		},
 	});
 
-	if (loading) {
+	if (loading || logoutLoading || postsLoading) {
 		return <Loader />;
 	}
 
@@ -53,11 +44,10 @@ const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 				<View style={styles.logout}>
 					<Button
 						style={{ marginBottom: 20 }}
-						onPress={async () => {
-							logout({
+						onPress={() => {
+							return logout({
 								update: async () => {
 									await apolloClient.resetStore();
-									navigation.replace('Login');
 								},
 							});
 						}}
@@ -65,13 +55,8 @@ const Profile: React.FC<ProfileProps> = ({ navigation }) => {
 						Logout
 					</Button>
 				</View>
-				{postsLoading && (
-					<View>
-						<Paragraph>Loading...</Paragraph>
-					</View>
-				)}
 				<View style={{ flex: 1 }}>
-					{posts?.getUserPosts && (
+					{posts?.getUserPosts.length && (
 						<FlatList
 							data={posts?.getUserPosts}
 							renderItem={({ item }: { item: Post }) => {
@@ -105,6 +90,9 @@ const styles = StyleSheet.create({
 	logout: {
 		paddingHorizontal: 15,
 		paddingVertical: 10,
+	},
+	empty: {
+		textAlign: 'center',
 	},
 });
 

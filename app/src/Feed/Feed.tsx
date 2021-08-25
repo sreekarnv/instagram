@@ -3,11 +3,8 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostItem from '../components/PostItem';
-import { MainNavigatorProps } from '../navigation/MainNavigator';
 
-type FeedProps = MainNavigatorProps;
-
-const Feed: React.FC<FeedProps> = () => {
+const Feed: React.FC = () => {
 	const { data: posts } = useGetAllPostsQuery({
 		variables: {
 			limit: 8,
