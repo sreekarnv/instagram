@@ -1,29 +1,22 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Subheading, Title, Avatar } from 'react-native-paper';
+import { Subheading, Title, Avatar } from 'react-native-paper';
 import Loader from '../components/Loader';
-import {
-	Post,
-	useGetUserPostsQuery,
-	useLogoutMutation,
-	useMeQuery,
-} from '../graphql/generated';
-import { useApolloClient } from '@apollo/client';
+import { Post, useGetUserPostsQuery, useMeQuery } from '../graphql/generated';
 import { Feather } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
 import PostItem from '../components/PostItem';
 
 const Profile: React.FC = () => {
 	const { data, loading } = useMeQuery();
-	const [logout, { loading: logoutLoading }] = useLogoutMutation();
-	const apolloClient = useApolloClient();
+
 	const { data: posts, loading: postsLoading } = useGetUserPostsQuery({
 		variables: {
 			limit: 10,
 		},
 	});
 
-	if (loading || logoutLoading || postsLoading) {
+	if (loading || postsLoading) {
 		return <Loader />;
 	}
 
@@ -41,22 +34,8 @@ const Profile: React.FC = () => {
 						<Subheading>{data?.me?.email}</Subheading>
 					</View>
 				</View>
-				<View style={styles.logout}>
-					<Button
-						style={{ marginBottom: 20 }}
-						onPress={() => {
-							return logout({
-								update: async () => {
-									await apolloClient.resetStore();
-								},
-							});
-						}}
-						mode='contained'>
-						Logout
-					</Button>
-				</View>
 				<View style={{ flex: 1 }}>
-					{posts?.getUserPosts.length && (
+					{posts?.getUserPosts && (
 						<FlatList
 							data={posts?.getUserPosts}
 							renderItem={({ item }: { item: Post }) => {
@@ -86,13 +65,6 @@ const styles = StyleSheet.create({
 	},
 	userInfo: {
 		marginLeft: 15,
-	},
-	logout: {
-		paddingHorizontal: 15,
-		paddingVertical: 10,
-	},
-	empty: {
-		textAlign: 'center',
 	},
 });
 

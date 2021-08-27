@@ -46,19 +46,9 @@ export class PostResolver {
 	@FieldResolver(() => User)
 	async user(
 		@Root() post: Post,
-		@Ctx() { userLoader, redis }: Context
+		@Ctx() { userLoader }: Context
 	): Promise<User> {
-		let userData = (await redis.get(`user-${post.userId}`)) as any;
-		let user;
-
-		if (userData) {
-			user = JSON.parse(userData);
-		}
-
-		if (!user) {
-			let user = await userLoader.load(post.userId);
-			await redis.set(`user-${post.userId}`, JSON.stringify(user));
-		}
+		let user = await userLoader.load(post.userId);
 
 		return user;
 	}
@@ -127,17 +117,15 @@ export class PostResolver {
 
 	@Mutation(() => Post)
 	async createPost(
-		@Ctx() { req, redis }: Context,
+		@Ctx() { req }: Context,
 		@Arg('details') { description, photo }: CreatePostInputType
 	) {
+		console.log(photo);
 		try {
 			const post = await Post.create({
 				description,
-				photo,
 				userId: req.session.userId,
 			}).save();
-
-			redis.set(`post-${post.id}`, JSON.stringify(post));
 
 			return post;
 		} catch (err) {

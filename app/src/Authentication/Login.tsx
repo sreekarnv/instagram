@@ -4,8 +4,10 @@ import { MeDocument, useLoginMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
-import { Button } from 'react-native-paper';
+import { Button, Divider, Headline } from 'react-native-paper';
 import { AuthStackNavProps } from '../navigation/types';
+
+import Link from '../components/Link';
 
 type LoginProps = AuthStackNavProps<'Login'>;
 
@@ -14,6 +16,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 
 	return (
 		<View style={styles.container}>
+			<View />
 			<Formik
 				initialValues={{ email: '', password: '' }}
 				onSubmit={({ email, password }, { setErrors, resetForm }) => {
@@ -47,6 +50,9 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 					return (
 						<>
 							<View>
+								<Headline style={{ marginBottom: 20, textAlign: 'center' }}>
+									Login
+								</Headline>
 								<FormInput
 									name='email'
 									label='Email'
@@ -62,27 +68,26 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 									Login
 								</Button>
 							</View>
-
-							<Button
-								style={{
-									marginTop: 40,
-								}}
-								mode='outlined'
-								onPress={() => navigation.navigate('Register')}>
-								Register
-							</Button>
 						</>
 					);
 				}}
 			</Formik>
+
+			<View>
+				<Divider style={{ marginBottom: 20 }} />
+				<Link onPress={() => navigation.navigate('Register')}>
+					New here ? Click here to Register
+				</Link>
+			</View>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
+		flex: 1,
 		padding: 20,
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 	},
 });
 

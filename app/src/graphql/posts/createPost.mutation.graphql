@@ -1,4 +1,4 @@
-mutation CreatePost($description: String!, $photo: String!) {
+mutation CreatePost($description: String!, $photo: Upload!) {
 	createPost(details: { description: $description, photo: $photo }) {
 		id
 		description

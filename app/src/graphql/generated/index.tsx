@@ -14,11 +14,13 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type CreatePostInputType = {
   description: Scalars['String'];
-  photo: Scalars['String'];
+  photo: Scalars['Upload'];
 };
 
 
@@ -38,6 +40,7 @@ export type Mutation = {
   login: UserResponse;
   register: UserResponse;
   logout: Scalars['Boolean'];
+  updateProfile: Scalars['Boolean'];
   createPost: Post;
   deletePost: Scalars['Boolean'];
   likePost: Scalars['Boolean'];
@@ -51,6 +54,11 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   details: RegisterUserInput;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  details: UpdateProfileInputType;
 };
 
 
@@ -112,6 +120,12 @@ export type RegisterUserInput = {
   passwordConfirm: Scalars['String'];
 };
 
+export type UpdateProfileInputType = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+};
+
+
 export type User = {
   __typename?: 'User';
   id: Scalars['String'];
@@ -129,7 +143,7 @@ export type UserResponse = {
 
 export type CreatePostMutationVariables = Exact<{
   description: Scalars['String'];
-  photo: Scalars['String'];
+  photo: Scalars['Upload'];
 }>;
 
 
@@ -252,9 +266,20 @@ export type RegisterMutation = (
   ) }
 );
 
+export type UpdateProfileMutationVariables = Exact<{
+  email: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type UpdateProfileMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'updateProfile'>
+);
+
 
 export const CreatePostDocument = gql`
-    mutation CreatePost($description: String!, $photo: String!) {
+    mutation CreatePost($description: String!, $photo: Upload!) {
   createPost(details: {description: $description, photo: $photo}) {
     id
     description
@@ -570,3 +595,35 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UpdateProfileDocument = gql`
+    mutation UpdateProfile($email: String!, $name: String!) {
+  updateProfile(details: {email: $email, name: $name})
+}
+    `;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, options);
+      }
+export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
+export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;

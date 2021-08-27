@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import CreatePost from '../Feed/CreatePost';
+import Form from '../Post/Form';
+import SelectPicture from '../Post/SelectPicture';
 import { CreatePostParamsList } from './types';
 
 interface CreatePostNavigatorProps {}
@@ -12,9 +13,14 @@ const CreatePostNavigator: React.FC<CreatePostNavigatorProps> = ({}) => {
 		<>
 			<Stack.Navigator>
 				<Stack.Screen
-					name='CreatePost'
+					name='SelectPicture'
 					options={{ title: 'Create Post' }}
-					component={CreatePost}
+					component={SelectPicture}
+				/>
+				<Stack.Screen
+					name='Form'
+					options={{ title: 'Create Post' }}
+					component={Form}
 				/>
 			</Stack.Navigator>
 		</>

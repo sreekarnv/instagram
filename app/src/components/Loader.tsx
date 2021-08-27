@@ -7,7 +7,7 @@ interface LoaderProps {}
 const Loader: React.FC<LoaderProps> = ({}) => {
 	return (
 		<View style={styles.root}>
-			<ActivityIndicator />
+			<ActivityIndicator size={28} />
 		</View>
 	);
 };

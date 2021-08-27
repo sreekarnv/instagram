@@ -4,8 +4,9 @@ import { MeDocument, useRegisterMutation } from '../graphql/generated';
 import { Formik } from 'formik';
 import FormInput from '../components/FormInput';
 import { getFormikErrors } from '../utils/formikFieldError';
-import { Button } from 'react-native-paper';
+import { Button, Divider, Headline } from 'react-native-paper';
 import { AuthStackNavProps } from '../navigation/types';
+import Link from '../components/Link';
 
 type RegisterProps = AuthStackNavProps<'Register'>;
 
@@ -14,6 +15,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 
 	return (
 		<View style={styles.container}>
+			<View />
 			<Formik
 				initialValues={{
 					name: '',
@@ -56,6 +58,9 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 				{({ handleSubmit }) => {
 					return (
 						<View style={styles.form}>
+							<Headline style={{ marginBottom: 20, textAlign: 'center' }}>
+								Register
+							</Headline>
 							<FormInput name='name' label='Name' />
 							<FormInput name='email' label='Email' />
 							<FormInput name='password' label='Password' secureTextEntry />
@@ -74,16 +79,21 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 					);
 				}}
 			</Formik>
-			<Button mode='outlined' onPress={() => navigation.navigate('Login')}>
-				Login
-			</Button>
+			<View>
+				<Divider style={{ marginBottom: 20 }} />
+				<Link onPress={() => navigation.navigate('Login')}>
+					Have an Account ? Click here to Login
+				</Link>
+			</View>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
+		flex: 1,
 		padding: 20,
+		justifyContent: 'space-between',
 	},
 	form: {
 		marginBottom: 30,

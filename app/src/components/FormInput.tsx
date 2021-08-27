@@ -9,6 +9,8 @@ interface FormInputProps {
 	secureTextEntry?: boolean;
 	multiline?: boolean;
 	keyboardType?: TextInputProps['keyboardType'];
+	style?: any;
+	mode?: 'outlined' | 'flat';
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -16,6 +18,8 @@ const FormInput: React.FC<FormInputProps> = ({
 	keyboardType = 'default',
 	secureTextEntry = false,
 	multiline = false,
+	mode = 'outlined',
+	style,
 	...props
 }) => {
 	const theme = useTheme();
@@ -26,7 +30,7 @@ const FormInput: React.FC<FormInputProps> = ({
 			<View style={{ marginBottom: 20 }}>
 				<TextInput
 					multiline={multiline}
-					mode='outlined'
+					mode={mode}
 					label={label}
 					value={value}
 					secureTextEntry={secureTextEntry}
@@ -35,6 +39,7 @@ const FormInput: React.FC<FormInputProps> = ({
 						setValue(t);
 					}}
 					error={!!error}
+					{...{ style }}
 				/>
 				{error && (
 					<Paragraph style={[styles.error, { color: theme.colors.error }]}>

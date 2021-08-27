@@ -19,14 +19,26 @@ export type FeedStackParamsList = {
 
 export type ProfileStackParamsList = {
 	Profile: undefined;
+	EditProfile: { submit?: React.MutableRefObject<any> };
 };
 
 export type CreatePostParamsList = {
-	CreatePost: undefined;
+	SelectPicture: undefined;
+	Form: { imageUrl: string };
 };
 
 // Nav Props
 export type AuthStackNavProps<T extends keyof AuthStackParamsList> = {
 	navigation: StackNavigationProp<AuthStackParamsList, T>;
 	route: RouteProp<AuthStackParamsList, T>;
+};
+
+export type ProfileStackNavProps<T extends keyof ProfileStackParamsList> = {
+	navigation: StackNavigationProp<ProfileStackParamsList, T>;
+	route: RouteProp<ProfileStackParamsList, T>;
+};
+
+export type CreatePostStackNavProps<T extends keyof CreatePostParamsList> = {
+	navigation: StackNavigationProp<CreatePostParamsList, T>;
+	route: RouteProp<CreatePostParamsList, T>;
 };
