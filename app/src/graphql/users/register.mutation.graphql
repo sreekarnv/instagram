@@ -20,6 +20,7 @@ mutation Register(
 			id
 			email
 			name
+			photo
 		}
 	}
 }

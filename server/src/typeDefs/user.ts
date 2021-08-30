@@ -1,5 +1,7 @@
+import { GraphQLUpload } from 'graphql-upload';
 import { Field, InputType, ObjectType } from 'type-graphql';
 import { User } from '../entity/User';
+import { Upload } from '../types';
 import { FieldError } from './error';
 
 @InputType('LoginUserInput')
@@ -42,4 +44,7 @@ export class UpdateProfileInputType {
 
 	@Field()
 	name!: string;
+
+	@Field(() => GraphQLUpload, { nullable: true })
+	photo?: Upload;
 }

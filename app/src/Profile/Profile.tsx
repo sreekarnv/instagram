@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SERVER_URL } from '@env';
 import { View, StyleSheet } from 'react-native';
 import { Subheading, Title, Avatar } from 'react-native-paper';
 import Loader from '../components/Loader';
@@ -24,11 +25,18 @@ const Profile: React.FC = () => {
 		<>
 			<View style={styles.root}>
 				<View style={styles.user}>
-					<Avatar.Icon
-						icon={() => {
-							return <Feather name='user' size={35} color='#fff' />;
-						}}
-					/>
+					{data?.me?.photo ? (
+						<Avatar.Image
+							size={65}
+							source={{ uri: `${SERVER_URL}/${data.me.photo}` }}
+						/>
+					) : (
+						<Avatar.Icon
+							icon={() => {
+								return <Feather name='user' size={35} color='#fff' />;
+							}}
+						/>
+					)}
 					<View style={styles.userInfo}>
 						<Title>{data?.me?.name}</Title>
 						<Subheading>{data?.me?.email}</Subheading>

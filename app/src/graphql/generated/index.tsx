@@ -123,12 +123,14 @@ export type RegisterUserInput = {
 export type UpdateProfileInputType = {
   email: Scalars['String'];
   name: Scalars['String'];
+  photo?: Maybe<Scalars['Upload']>;
 };
 
 
 export type User = {
   __typename?: 'User';
   id: Scalars['String'];
+  photo?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   name: Scalars['String'];
   createdAt: Scalars['DateTime'];
@@ -154,9 +156,19 @@ export type CreatePostMutation = (
     & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt' | 'updatedAt'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email'>
+      & Pick<User, 'id' | 'email' | 'photo'>
     ) }
   ) }
+);
+
+export type DeletePostMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeletePostMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deletePost'>
 );
 
 export type GetAllPostsQueryVariables = Exact<{
@@ -172,7 +184,7 @@ export type GetAllPostsQuery = (
     & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt' | 'numLikes' | 'liked'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name'>
+      & Pick<User, 'id' | 'name' | 'photo'>
     ) }
   )> }
 );
@@ -190,7 +202,7 @@ export type GetUserPostsQuery = (
     & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt' | 'numLikes' | 'liked'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name'>
+      & Pick<User, 'id' | 'photo' | 'name'>
     ) }
   )> }
 );
@@ -217,7 +229,7 @@ export type LoginMutation = (
     { __typename?: 'UserResponse' }
     & { user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email' | 'name'>
+      & Pick<User, 'id' | 'email' | 'name' | 'photo'>
     )>, errors?: Maybe<Array<(
       { __typename?: 'FieldError' }
       & Pick<FieldError, 'field' | 'message'>
@@ -240,7 +252,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'name'>
+    & Pick<User, 'id' | 'email' | 'name' | 'photo'>
   )> }
 );
 
@@ -261,14 +273,15 @@ export type RegisterMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email' | 'name'>
+      & Pick<User, 'id' | 'email' | 'name' | 'photo'>
     )> }
   ) }
 );
 
 export type UpdateProfileMutationVariables = Exact<{
-  email: Scalars['String'];
   name: Scalars['String'];
+  email: Scalars['String'];
+  photo?: Maybe<Scalars['Upload']>;
 }>;
 
 
@@ -287,6 +300,7 @@ export const CreatePostDocument = gql`
     user {
       id
       email
+      photo
     }
     createdAt
     updatedAt
@@ -320,6 +334,37 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const DeletePostDocument = gql`
+    mutation DeletePost($id: String!) {
+  deletePost(id: $id)
+}
+    `;
+export type DeletePostMutationFn = Apollo.MutationFunction<DeletePostMutation, DeletePostMutationVariables>;
+
+/**
+ * __useDeletePostMutation__
+ *
+ * To run a mutation, you first call `useDeletePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePostMutation, { data, loading, error }] = useDeletePostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<DeletePostMutation, DeletePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument, options);
+      }
+export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
+export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
+export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
 export const GetAllPostsDocument = gql`
     query GetAllPosts($limit: Int!, $cursor: DateTime) {
   getAllPosts(limit: $limit, cursor: $cursor) {
@@ -330,6 +375,7 @@ export const GetAllPostsDocument = gql`
     user {
       id
       name
+      photo
     }
     numLikes
     liked
@@ -374,6 +420,7 @@ export const GetUserPostsDocument = gql`
     createdAt
     user {
       id
+      photo
       name
     }
     numLikes
@@ -448,6 +495,7 @@ export const LoginDocument = gql`
       id
       email
       name
+      photo
     }
     errors {
       field
@@ -519,6 +567,7 @@ export const MeDocument = gql`
     id
     email
     name
+    photo
   }
 }
     `;
@@ -562,6 +611,7 @@ export const RegisterDocument = gql`
       id
       email
       name
+      photo
     }
   }
 }
@@ -596,8 +646,8 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const UpdateProfileDocument = gql`
-    mutation UpdateProfile($email: String!, $name: String!) {
-  updateProfile(details: {email: $email, name: $name})
+    mutation UpdateProfile($name: String!, $email: String!, $photo: Upload) {
+  updateProfile(details: {email: $email, name: $name, photo: $photo})
 }
     `;
 export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
@@ -615,8 +665,9 @@ export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutat
  * @example
  * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
  *   variables: {
- *      email: // value for 'email'
  *      name: // value for 'name'
+ *      email: // value for 'email'
+ *      photo: // value for 'photo'
  *   },
  * });
  */

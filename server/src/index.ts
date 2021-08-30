@@ -16,11 +16,15 @@ import { likeLoader, numLikesLoader } from './dataloaders/likeLoader';
 import Redis from 'ioredis';
 import connectRedis from 'connect-redis';
 import { Likes } from './entity/Likes';
+import { graphqlUploadExpress } from 'graphql-upload';
+import path from 'path';
 
 console.log(`NODE_ENV=${env.NODE_ENV}`);
 const PORT = env.PORT || 4000;
 
 const app = express();
+
+app.use('/', express.static(path.join(__dirname, '../uploads')));
 
 (async () => {
 	try {
@@ -61,7 +65,10 @@ const app = express();
 			})
 		);
 
+		app.use('/graphql', graphqlUploadExpress());
+
 		const server = new ApolloServer({
+			uploads: false,
 			schema: await buildSchema({
 				resolvers: [UserResolver, PostResolver],
 				validate: false,

@@ -18,6 +18,10 @@ export class User extends BaseEntity {
 	@PrimaryColumn()
 	id!: string;
 
+	@Field({ nullable: true })
+	@Column({ nullable: true })
+	photo?: string;
+
 	@Field()
 	@Column({ unique: true, length: 255 })
 	email!: string;

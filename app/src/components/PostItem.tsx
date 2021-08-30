@@ -1,5 +1,11 @@
+import { SERVER_URL } from '@env';
 import * as React from 'react';
-import { Post, useLikePostMutation } from '../graphql/generated';
+import {
+	Post,
+	useLikePostMutation,
+	useMeQuery,
+	useDeletePostMutation,
+} from '../graphql/generated';
 import {
 	Image,
 	StyleSheet,
@@ -7,8 +13,15 @@ import {
 	View,
 	Dimensions,
 } from 'react-native';
-import { Avatar, Paragraph, Subheading, Text } from 'react-native-paper';
-import { AntDesign, Feather } from '@expo/vector-icons';
+import {
+	Avatar,
+	Menu,
+	Paragraph,
+	Subheading,
+	Text,
+	useTheme,
+} from 'react-native-paper';
+import { AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const { height } = Dimensions.get('window');
@@ -18,9 +31,17 @@ interface PostProps {
 }
 
 const PostItem: React.FC<PostProps> = ({ post }) => {
+	const { data } = useMeQuery();
+	const theme = useTheme();
+	const [visible, setVisible] = React.useState(false);
 	const [likePost] = useLikePostMutation();
 	const [show, setShow] = React.useState<boolean>(false);
 	const [tap, setTap] = React.useState<number>(0);
+	const [deletePost] = useDeletePostMutation({
+		variables: {
+			id: post.id,
+		},
+	});
 
 	React.useEffect(() => {
 		(async () => {
@@ -49,16 +70,67 @@ const PostItem: React.FC<PostProps> = ({ post }) => {
 			}}>
 			<View style={styles.root}>
 				<View style={styles.header}>
-					<Avatar.Icon
-						size={35}
-						icon={() => {
-							return <Feather color='white' size={18} name='user' />;
-						}}
-					/>
-					<Subheading style={styles.username}>{post?.user.name}</Subheading>
+					<View style={styles.avatar}>
+						{post.user.photo ? (
+							<Avatar.Image
+								size={35}
+								source={{ uri: `${SERVER_URL}/${post.user.photo}` }}
+							/>
+						) : (
+							<Avatar.Icon
+								size={35}
+								icon={() => {
+									return <Feather color='white' size={18} name='user' />;
+								}}
+							/>
+						)}
+						<Subheading style={styles.username}>{post?.user.name}</Subheading>
+					</View>
+					{data?.me?.id === post.user.id && (
+						<Menu
+							visible={visible}
+							onDismiss={() => {
+								setVisible(false);
+							}}
+							anchor={
+								<TouchableOpacity
+									onPress={() => {
+										setVisible(true);
+									}}
+									style={{ paddingRight: 10 }}>
+									<Feather name='more-vertical' size={24} color='black' />
+								</TouchableOpacity>
+							}>
+							<Menu.Item
+								titleStyle={{ color: theme.colors.error }}
+								onPress={() => {
+									return deletePost({
+										update: async (cache) => {
+											await cache.reset();
+										},
+									});
+								}}
+								title='Delete Post'
+								icon={() => (
+									<MaterialIcons
+										color={theme.colors.error}
+										name='delete'
+										size={20}
+									/>
+								)}
+							/>
+						</Menu>
+					)}
 				</View>
 				<View style={styles.imageContainer}>
-					<Image style={styles.image} source={{ uri: post.photo! }} />
+					<Image
+						style={styles.image}
+						source={{
+							uri: post.photo?.includes('https://')
+								? post.photo!
+								: `${SERVER_URL}/${post.photo}`,
+						}}
+					/>
 				</View>
 				<View style={styles.cta}>
 					<TouchableOpacity
@@ -110,9 +182,14 @@ const styles = StyleSheet.create({
 	root: {
 		marginBottom: 20,
 	},
+	avatar: {
+		alignItems: 'center',
+		flexDirection: 'row',
+	},
 	header: {
 		alignItems: 'center',
 		flexDirection: 'row',
+		justifyContent: 'space-between',
 		paddingVertical: 20,
 		paddingHorizontal: 10,
 	},

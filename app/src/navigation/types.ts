@@ -1,4 +1,5 @@
-import { RouteProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { CompositeNavigationProp, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 // Params List
@@ -24,8 +25,16 @@ export type ProfileStackParamsList = {
 
 export type CreatePostParamsList = {
 	SelectPicture: undefined;
-	Form: { imageUrl: string };
+	Form: { imageUrl: string; submit?: React.MutableRefObject<any> };
 };
+
+export type ProfileScreenNavigationProp = CompositeNavigationProp<
+	BottomTabNavigationProp<MainTabsParamsList, 'Profile'>,
+	CompositeNavigationProp<
+		StackNavigationProp<CreatePostParamsList, 'Form'>,
+		BottomTabNavigationProp<MainTabsParamsList, 'Profile'>
+	>
+>;
 
 // Nav Props
 export type AuthStackNavProps<T extends keyof AuthStackParamsList> = {
@@ -34,7 +43,7 @@ export type AuthStackNavProps<T extends keyof AuthStackParamsList> = {
 };
 
 export type ProfileStackNavProps<T extends keyof ProfileStackParamsList> = {
-	navigation: StackNavigationProp<ProfileStackParamsList, T>;
+	navigation: ProfileScreenNavigationProp;
 	route: RouteProp<ProfileStackParamsList, T>;
 };
 

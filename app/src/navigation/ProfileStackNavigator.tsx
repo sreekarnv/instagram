@@ -3,17 +3,15 @@ import * as React from 'react';
 import Loader from '../components/Loader';
 import Profile from '../Profile/Profile';
 import { useLogoutMutation, useMeQuery } from '../graphql/generated';
-import { ProfileStackNavProps, ProfileStackParamsList } from './types';
+import { ProfileStackParamsList } from './types';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import { Menu, Divider, useTheme } from 'react-native-paper';
 import EditProfile from '../Profile/EditProfile';
 
-interface ProfileStackNavigatorProps {}
-
 const Stack = createStackNavigator<ProfileStackParamsList>();
 
-const ProfileStackNavigator: React.FC<ProfileStackNavigatorProps> = ({}) => {
+const ProfileStackNavigator: React.FC = ({}) => {
 	const theme = useTheme();
 	const { data, loading } = useMeQuery();
 	const [logout, { loading: logoutLoading }] = useLogoutMutation();
@@ -31,7 +29,7 @@ const ProfileStackNavigator: React.FC<ProfileStackNavigatorProps> = ({}) => {
 		<>
 			<Stack.Navigator>
 				<Stack.Screen
-					options={({ navigation }: ProfileStackNavProps<'Profile'>) => {
+					options={({ navigation }) => {
 						return {
 							title: data?.me?.name,
 							headerRight: () => (
@@ -83,10 +81,7 @@ const ProfileStackNavigator: React.FC<ProfileStackNavigatorProps> = ({}) => {
 				/>
 
 				<Stack.Screen
-					options={({
-						route,
-						navigation,
-					}: ProfileStackNavProps<'EditProfile'>) => {
+					options={({ route, navigation }) => {
 						return {
 							headerRight: () => {
 								return (

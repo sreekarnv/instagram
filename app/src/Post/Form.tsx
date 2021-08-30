@@ -1,13 +1,31 @@
+import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as React from 'react';
 import { Image, View } from 'react-native';
-import { Button } from 'react-native-paper';
 import FormInput from '../components/FormInput';
-import { useCreatePostMutation } from '../graphql/generated';
-import { CreatePostStackNavProps } from '../navigation/types';
+import { useCreatePostMutation, useMeQuery } from '../graphql/generated';
+import {
+	CreatePostStackNavProps,
+	ProfileScreenNavigationProp,
+} from '../navigation/types';
+import { ReactNativeFile } from 'apollo-upload-client';
+import Loader from '../components/Loader';
+import * as mime from 'react-native-mime-types';
 
 const Form: React.FC<CreatePostStackNavProps<'Form'>> = ({ route }) => {
 	const [createPost, { loading }] = useCreatePostMutation();
+	const { data } = useMeQuery();
+	const submit = React.useRef<any>();
+
+	const navigation = useNavigation<ProfileScreenNavigationProp>();
+
+	React.useEffect(() => {
+		navigation.setParams({ submit });
+	}, []);
+
+	if (loading) {
+		return <Loader />;
+	}
 
 	return (
 		<>
@@ -19,23 +37,39 @@ const Form: React.FC<CreatePostStackNavProps<'Form'>> = ({ route }) => {
 						bottom: 0,
 						left: 0,
 						width: '100%',
-						backgroundColor: 'rgba(255, 255,255, 0.45)',
+						backgroundColor: 'rgba(255, 255,255, 0.75)',
 					}}>
 					<Formik
 						initialValues={{
 							description: '',
 						}}
-						onSubmit={({ description }) => {
-							const formData = new FormData();
-							formData.append('photo', route.params.imageUrl);
-							return createPost({
+						onSubmit={async ({ description }) => {
+							const file = new ReactNativeFile({
+								uri: route.params.imageUrl,
+								type: mime.lookup(route.params.imageUrl) || 'image',
+								name: `filename-${data?.me?.name}`,
+							});
+
+							await createPost({
 								variables: {
 									description,
-									photo: formData,
+									photo: file,
+								},
+
+								update: async (cache) => {
+									await cache.reset();
+									navigation.reset({
+										routes: [
+											{
+												name: 'Feed',
+											},
+										],
+									});
 								},
 							});
 						}}>
 						{({ handleSubmit }) => {
+							submit.current = handleSubmit;
 							return (
 								<>
 									<FormInput
@@ -45,12 +79,6 @@ const Form: React.FC<CreatePostStackNavProps<'Form'>> = ({ route }) => {
 										name='description'
 										label='Description'
 									/>
-									<Button
-										onPress={() => {
-											handleSubmit();
-										}}>
-										Submit
-									</Button>
 								</>
 							);
 						}}

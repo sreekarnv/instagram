@@ -15,6 +15,8 @@ import { Context } from '../types';
 import { Likes } from '../entity/Likes';
 import { v4 as uuidv4 } from 'uuid';
 import { getConnection } from 'typeorm';
+import { createWriteStream } from 'fs';
+import path from 'path';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -120,10 +122,22 @@ export class PostResolver {
 		@Ctx() { req }: Context,
 		@Arg('details') { description, photo }: CreatePostInputType
 	) {
-		console.log(photo);
+		const { createReadStream } = await photo;
+		const filename = `${uuidv4()}.jpg`;
+		new Promise(async (resolve, reject) =>
+			createReadStream().pipe(
+				createWriteStream(
+					path.resolve(`${__dirname}/../../uploads/${filename}`)
+				)
+					.on('finish', () => resolve(true))
+					.on('error', () => reject)
+			)
+		);
+
 		try {
 			const post = await Post.create({
 				description,
+				photo: filename,
 				userId: req.session.userId,
 			}).save();
 

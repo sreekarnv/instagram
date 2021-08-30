@@ -6,6 +6,7 @@ mutation CreatePost($description: String!, $photo: Upload!) {
 		user {
 			id
 			email
+			photo
 		}
 		createdAt
 		updatedAt

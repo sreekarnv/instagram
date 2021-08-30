@@ -11,6 +11,9 @@ import {
 } from '../typeDefs/user';
 import { handleLoginErrors } from '../validation/userValidation';
 import env from '../config/env';
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+import { createWriteStream } from 'fs';
 
 @Resolver()
 export class UserResolver {
@@ -86,10 +89,32 @@ export class UserResolver {
 
 	@Mutation(() => Boolean)
 	async updateProfile(
-		@Arg('details') { name, email }: UpdateProfileInputType,
+		@Arg('details') { name, email, photo }: UpdateProfileInputType,
 		@Ctx() { req }: Context
 	): Promise<Boolean> {
-		await User.update({ id: req.session.userId }, { name, email });
+		let filename: string | null = null;
+		const update: any = { name, email };
+		const photoDetails = await photo;
+
+		if (photoDetails) {
+			const { createReadStream } = photoDetails;
+			filename = `${uuidv4()}.jpg`;
+
+			new Promise(async (resolve, reject) =>
+				createReadStream().pipe(
+					createWriteStream(
+						path.resolve(`${__dirname}/../../uploads/${filename}`)
+					)
+						.on('finish', () => resolve(true))
+						.on('error', () => reject)
+				)
+			);
+
+			update.photo = filename;
+		}
+
+		await User.update({ id: req.session.userId }, update);
+
 		return true;
 	}
 }

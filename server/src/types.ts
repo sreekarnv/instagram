@@ -1,3 +1,4 @@
+import { Stream } from 'stream';
 import DataLoader from 'dataloader';
 import { Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
@@ -11,6 +12,14 @@ export type IRequest = Request & {
 			userId?: string;
 		};
 };
+
+export class Upload {
+	encoding!: string;
+	filename!: string;
+	mimetype!: string;
+	createReadStream!: () => Stream;
+}
+
 
 export type Context = {
 	req: IRequest;
