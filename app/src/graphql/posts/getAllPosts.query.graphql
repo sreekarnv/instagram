@@ -1,15 +1,17 @@
 query GetAllPosts($limit: Int!, $cursor: DateTime) {
 	getAllPosts(limit: $limit, cursor: $cursor) {
-		id
-		description
-		photo
-		createdAt
-		user {
+		hasNext
+		posts {
 			id
-			name
 			photo
+			description
+			createdAt
+			user {
+				id
+				name
+			}
+			numLikes
+			liked
 		}
-		numLikes
-		liked
 	}
 }

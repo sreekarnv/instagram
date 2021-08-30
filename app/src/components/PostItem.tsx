@@ -71,19 +71,12 @@ const PostItem: React.FC<PostProps> = ({ post }) => {
 			<View style={styles.root}>
 				<View style={styles.header}>
 					<View style={styles.avatar}>
-						{post.user.photo ? (
-							<Avatar.Image
-								size={35}
-								source={{ uri: `${SERVER_URL}/${post.user.photo}` }}
-							/>
-						) : (
-							<Avatar.Icon
-								size={35}
-								icon={() => {
-									return <Feather color='white' size={18} name='user' />;
-								}}
-							/>
-						)}
+						<Avatar.Icon
+							size={35}
+							icon={() => {
+								return <Feather color='white' size={18} name='user' />;
+							}}
+						/>
 						<Subheading style={styles.username}>{post?.user.name}</Subheading>
 					</View>
 					{data?.me?.id === post.user.id && (

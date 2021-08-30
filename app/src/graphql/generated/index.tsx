@@ -88,10 +88,16 @@ export type Post = {
   numLikes: Scalars['Float'];
 };
 
+export type PostsResponse = {
+  __typename?: 'PostsResponse';
+  hasNext?: Maybe<Scalars['Boolean']>;
+  posts?: Maybe<Array<Post>>;
+};
+
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
-  getAllPosts: Array<Post>;
+  getAllPosts: PostsResponse;
   getUserPosts: Array<Post>;
   getPost?: Maybe<Post>;
 };
@@ -179,14 +185,18 @@ export type GetAllPostsQueryVariables = Exact<{
 
 export type GetAllPostsQuery = (
   { __typename?: 'Query' }
-  & { getAllPosts: Array<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'description' | 'photo' | 'createdAt' | 'numLikes' | 'liked'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photo'>
-    ) }
-  )> }
+  & { getAllPosts: (
+    { __typename?: 'PostsResponse' }
+    & Pick<PostsResponse, 'hasNext'>
+    & { posts?: Maybe<Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'photo' | 'description' | 'createdAt' | 'numLikes' | 'liked'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name'>
+      ) }
+    )>> }
+  ) }
 );
 
 export type GetUserPostsQueryVariables = Exact<{
@@ -368,17 +378,19 @@ export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMut
 export const GetAllPostsDocument = gql`
     query GetAllPosts($limit: Int!, $cursor: DateTime) {
   getAllPosts(limit: $limit, cursor: $cursor) {
-    id
-    description
-    photo
-    createdAt
-    user {
+    hasNext
+    posts {
       id
-      name
       photo
+      description
+      createdAt
+      user {
+        id
+        name
+      }
+      numLikes
+      liked
     }
-    numLikes
-    liked
   }
 }
     `;

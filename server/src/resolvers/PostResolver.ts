@@ -10,7 +10,7 @@ import {
 } from 'type-graphql';
 import { Post } from '../entity/Post';
 import { User } from '../entity/User';
-import { CreatePostInputType } from '../typeDefs/post';
+import { CreatePostInputType, PostsResponse } from '../typeDefs/post';
 import { Context } from '../types';
 import { Likes } from '../entity/Likes';
 import { v4 as uuidv4 } from 'uuid';
@@ -55,34 +55,39 @@ export class PostResolver {
 		return user;
 	}
 
-	@Query(() => [Post])
+	@Query(() => PostsResponse)
 	async getAllPosts(
 		@Arg('limit', () => Int) givenLimit: number,
 		@Arg('cursor', () => Date, { nullable: true }) cursor: number
-	): Promise<Post[]> {
+	): Promise<PostsResponse> {
 		const limit = Math.min(givenLimit, 20);
 		let query = `
 			ORDER BY "createdAt" DESC
 		 	LIMIT $1
 			`;
 
-		let params = [limit];
+		let params = [limit + 1];
 		if (cursor) {
 			query = `
 				WHERE "createdAt" < $1
 				ORDER BY "createdAt" DESC
 				LIMIT $2
 			`;
-			params = [cursor, limit];
+			params = [cursor, limit + 1];
 		}
 
-		return await Post.query(
+		const posts = await Post.query(
 			`
 			SELECT * FROM "post"
 			${query}
 		`,
 			[...params]
 		);
+
+		return {
+			hasNext: posts.length === limit + 1,
+			posts: posts.slice(0, limit),
+		};
 	}
 
 	@Query(() => [Post])
