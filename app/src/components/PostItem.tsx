@@ -5,6 +5,9 @@ import {
 	useLikePostMutation,
 	useMeQuery,
 	useDeletePostMutation,
+	GetAllPostsDocument,
+	GetAllPostsQuery,
+	LikePostMutation,
 } from '../graphql/generated';
 import {
 	Image,
@@ -23,6 +26,7 @@ import {
 } from 'react-native-paper';
 import { AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { ApolloCache } from '@apollo/client';
 
 const { height } = Dimensions.get('window');
 
@@ -43,13 +47,48 @@ const PostItem: React.FC<PostProps> = ({ post }) => {
 		},
 	});
 
+	const updateCache = (cache: ApolloCache<LikePostMutation>) => {
+		const data: GetAllPostsQuery = cache.readQuery({
+			query: GetAllPostsDocument,
+		})!;
+		if (!!data.getAllPosts) {
+			const myPostIdx = data.getAllPosts.posts!.findIndex(
+				(p) => p.id === post.id
+			);
+
+			const myPost = data.getAllPosts.posts?.filter((p) => p.id === post.id);
+
+			if (!!myPost?.length) {
+				let post = { ...myPost[0] };
+				post.liked = !myPost[0].liked;
+				post.numLikes = post.liked
+					? myPost[0].numLikes + 1
+					: myPost[0].numLikes - 1;
+
+				let updatedPosts = [...data.getAllPosts.posts!];
+				updatedPosts[myPostIdx] = post;
+
+				cache.writeQuery({
+					query: GetAllPostsDocument,
+					data: {
+						...data,
+						getAllPosts: {
+							...data.getAllPosts,
+							posts: updatedPosts,
+						},
+					},
+				});
+			}
+		}
+	};
+
 	React.useEffect(() => {
 		(async () => {
 			if (tap === 2) {
-				likePost({
+				await likePost({
 					variables: { postId: post.id },
-					update: async (cache) => {
-						await cache.reset();
+					update: (cache) => {
+						updateCache(cache);
 					},
 				});
 				setTap(0);
@@ -131,7 +170,7 @@ const PostItem: React.FC<PostProps> = ({ post }) => {
 							likePost({
 								variables: { postId: post.id },
 								update: async (cache) => {
-									await cache.reset();
+									updateCache(cache);
 								},
 							})
 						}

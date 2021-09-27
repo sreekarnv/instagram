@@ -9,7 +9,6 @@ const apolloClient = new ApolloClient({
 				fields: {
 					getAllPosts: {
 						keyArgs: false,
-
 						merge(
 							existing = {
 								__typename: 'PostsResponse',
@@ -23,6 +22,15 @@ const apolloClient = new ApolloClient({
 								hasNext: true,
 								posts: [],
 							};
+
+							if (!existing?.posts?.length) {
+								return incoming;
+							}
+
+							if (existing?.posts[0].__ref === incoming?.posts[0].__ref) {
+								return existing;
+							}
+
 							updated.hasNext = incoming.hasNext;
 							updated.posts = [...existing.posts, ...incoming.posts];
 							return updated;
