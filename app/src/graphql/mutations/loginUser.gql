@@ -1,0 +1,5 @@
+mutation LoginUser($email: String!, $password: String!) {
+	user: loginUser(input: { email: $email, password: $password }) {
+		...minUser
+	}
+}

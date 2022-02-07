@@ -1,3 +1,0 @@
-mutation UpdateProfile($name: String!, $email: String!, $photo: Upload) {
-	updateProfile(details: { email: $email, name: $name, photo: $photo })
-}

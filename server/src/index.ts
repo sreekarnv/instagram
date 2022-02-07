@@ -1,82 +1,73 @@
-import { Post } from './entity/Post';
 import 'reflect-metadata';
 import express from 'express';
+import dotenv from 'dotenv';
 import { ApolloServer } from 'apollo-server-express';
-import { buildSchema } from 'type-graphql';
-import { UserResolver } from './resolvers/UserResolver';
-import cors from 'cors';
-import env from './config/env';
 import { createConnection } from 'typeorm';
-import { User } from './entity/User';
-import session from 'express-session';
+import {
+	ApolloServerPluginLandingPageGraphQLPlayground,
+	ApolloServerPluginLandingPageDisabled,
+} from 'apollo-server-core';
+import { UserResolver } from './resolvers/user.resolver';
+import { buildSchema } from 'type-graphql';
+import cors from 'cors';
+import cookieSession from 'cookie-session';
 import cookieParser from 'cookie-parser';
-import { PostResolver } from './resolvers/PostResolver';
+import { customAuthChecker } from './middleware/auth';
+import config from './ormconfig';
+import { PostResolver } from './resolvers/post.resolver';
 import userLoader from './dataloaders/userLoader';
-import { likeLoader, numLikesLoader } from './dataloaders/likeLoader';
-import Redis from 'ioredis';
-import connectRedis from 'connect-redis';
-import { Likes } from './entity/Likes';
-import { graphqlUploadExpress } from 'graphql-upload';
 import path from 'path';
+import { likeLoader, numLikesLoader } from './dataloaders/likeLoader';
 
-console.log(`NODE_ENV=${env.NODE_ENV}`);
-const PORT = env.PORT || 4000;
+dotenv.config();
 
-const app = express();
-
-app.use('/', express.static(path.join(__dirname, '../uploads')));
+console.log(`NODE_ENV=${process.env.NODE_ENV}`);
+const PORT = process.env.PORT || 4000;
 
 (async () => {
 	try {
-		await createConnection({
-			type: 'postgres',
-			url: env.DATABASE_URL,
-			entities: [User, Post, Likes],
-			synchronize: env.NODE_ENV === 'development',
-			logging: env.NODE_ENV === 'development',
-			migrations: ['./migration/*.ts'],
-			cli: {
-				migrationsDir: 'migration',
-			},
-		});
+		const connection = await createConnection(config);
 
-		const redisClient = new Redis();
-		const RedisStore = connectRedis(session);
+		connection.runMigrations();
 
-		app.use(cors());
-		app.use(cookieParser());
+		const app = express();
+
 		app.use(
-			session({
-				store: new RedisStore({
-					client: redisClient,
-					disableTTL: true,
-					disableTouch: true,
-				}),
-				secret: env.SESSION_SECRET,
-				cookie: {
-					httpOnly: true,
-					sameSite: 'lax',
-					secure: false,
-					maxAge: 1000 * 86400,
-				},
-				name: env.COOKIE_NAME,
-				saveUninitialized: false,
-				resave: false,
+			'/uploads/avatars',
+			express.static(path.join(__dirname, '../uploads', 'avatars'))
+		);
+
+		app.set('trust proxy', 1);
+		app.use(
+			cors({
+				credentials: true,
 			})
 		);
 
-		app.use('/graphql', graphqlUploadExpress());
+		app.use(cookieParser());
+		app.use(
+			cookieSession({
+				name: 'auth.session',
+				httpOnly: true,
+				secret: 'my-secret',
+				maxAge: 1000 * 60 * 60 * 24 * 7,
+			})
+		);
 
 		const server = new ApolloServer({
-			uploads: false,
 			schema: await buildSchema({
 				resolvers: [UserResolver, PostResolver],
 				validate: false,
+				authChecker: customAuthChecker,
 			}),
+			plugins: [
+				process.env.NODE_ENV === 'production'
+					? ApolloServerPluginLandingPageDisabled()
+					: ApolloServerPluginLandingPageGraphQLPlayground(),
+			],
 			context: ({ req, res }) => ({
 				req,
 				res,
-				redis: redisClient,
 				userLoader: userLoader(),
 				likeLoader: likeLoader(),
 				numLikesLoader: numLikesLoader(),
@@ -85,12 +76,13 @@ app.use('/', express.static(path.join(__dirname, '../uploads')));
 
 		await server.start();
 
-		server.applyMiddleware({ app, cors: false });
+		server.applyMiddleware({ app });
 
 		app.listen(PORT, () => {
-			console.log(`App running on port ${PORT}`);
+			console.log(`Server is running on port ${PORT}`);
 		});
 	} catch (err) {
 		console.log(err);
+		process.exit(1);
 	}
 })();
