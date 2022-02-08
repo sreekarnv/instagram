@@ -38,7 +38,6 @@ const FeedNavigator: React.FC<FeedNavigatorProps> = ({}) => {
 
 				<FeedTab.Screen
 					options={{
-						tabBarStyle: {},
 						headerShown: false,
 						tabBarShowLabel: false,
 						tabBarIcon: ({ focused }) => (

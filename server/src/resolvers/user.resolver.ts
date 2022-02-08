@@ -35,18 +35,18 @@ export class UserResolver {
 		return !!user;
 	}
 
-	// @Mutation(() => Boolean)
-	// async updateUsersPhoto() {
-	// 	const users = await User.find();
+	@Mutation(() => Boolean)
+	async updateUsersPhoto() {
+		const users = await User.find();
 
-	// 	users.forEach(async (u) => {
-	// 		const randomNumber = Math.floor(Math.random() * 4) + 1;
-	// 		u.photo = `/uploads/avatars/avatar-${randomNumber}.png`;
-	// 		await u.save();
-	// 	});
+		users.forEach(async (u) => {
+			const randomNumber = Math.floor(Math.random() * 4) + 1;
+			u.photo = `/uploads/avatars/avatar-${randomNumber}.png`;
+			await u.save();
+		});
 
-	// 	return true;
-	// }
+		return true;
+	}
 
 	@Query(() => [String])
 	async getUserIds() {
@@ -119,7 +119,10 @@ export class UserResolver {
 			throw new Error('Email is not valid');
 		}
 
-		const user = await User.findOne({ where: { email } });
+		const user = await User.createQueryBuilder()
+			.addSelect(['id', 'email', '"hasRegistered"', 'name'])
+			.where('email=:email', { email })
+			.getOne();
 
 		if (!user || !(await user.verifyPassword(user.password, password))) {
 			throw new Error('Invalid Credentials! Email or Password is incorrect');

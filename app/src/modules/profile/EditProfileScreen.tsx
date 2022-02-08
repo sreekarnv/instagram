@@ -12,6 +12,7 @@ import { showMessage } from 'react-native-flash-message';
 import { Theme } from '../../config/theme';
 import {
 	GetMeDocument,
+	useGetMeQuery,
 	useUpdateUserDetailsMutation,
 } from '../../graphql/generated';
 import FormInput from '../../shared/components/form/FormInput';
@@ -27,9 +28,10 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 	navigation,
 }) => {
 	const theme = useTheme<Theme>();
+	const { data, loading: getMeLoading } = useGetMeQuery();
 	const [updateDetails, { loading }] = useUpdateUserDetailsMutation();
 
-	if (loading) {
+	if (loading || getMeLoading) {
 		return (
 			<Box flex={1} justifyContent='center' alignItems='center'>
 				<ActivityIndicator size='large' color={theme.colors.secondary} />
@@ -44,7 +46,11 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 					<Box flex={1} justifyContent='space-between' paddingHorizontal={'l'}>
 						<Box>
 							<Formik
-								initialValues={{ email: '', name: '', phone: '' }}
+								initialValues={{
+									email: data?.user?.email || '',
+									name: data?.user?.name || '',
+									phone: data?.user?.phone || '',
+								}}
 								onSubmit={async (values, { resetForm }) => {
 									try {
 										await updateDetails({

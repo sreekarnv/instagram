@@ -42,6 +42,7 @@ export type Mutation = {
   updateHasRegistered: User;
   updateUserDetails: User;
   updateUserPhotoAvatar: User;
+  updateUsersPhoto: Scalars['Boolean'];
 };
 
 
@@ -150,7 +151,7 @@ export type User = {
 
 export type MinUserFragment = { __typename?: 'User', id: string, email: string, hasRegistered: boolean };
 
-export type UserFragment = { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, id: string, email: string, hasRegistered: boolean };
+export type UserFragment = { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean };
 
 export type LoginUserMutationVariables = Exact<{
   email: Scalars['String'];
@@ -181,7 +182,7 @@ export type UpdateUserDetailsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserDetailsMutation = { __typename?: 'Mutation', updateUserDetails: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, id: string, email: string, hasRegistered: boolean } };
+export type UpdateUserDetailsMutation = { __typename?: 'Mutation', updateUserDetails: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } };
 
 export type UpdateUserHasRegisteredMutationVariables = Exact<{
   name: Scalars['String'];
@@ -197,7 +198,7 @@ export type UpdateUserPhotoAvatarMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserPhotoAvatarMutation = { __typename?: 'Mutation', user: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, id: string, email: string, hasRegistered: boolean } };
+export type UpdateUserPhotoAvatarMutation = { __typename?: 'Mutation', user: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } };
 
 export type GetAllPostsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -207,15 +208,20 @@ export type GetAllPostsQueryVariables = Exact<{
 
 export type GetAllPostsQuery = { __typename?: 'Query', query: { __typename?: 'PostsResponseType', count: number, hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, description: string, updatedAt: any, createdAt: any, photo?: string | null | undefined, user: { __typename?: 'User', id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } }> } };
 
+export type GetBaseMeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBaseMeQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, email: string, hasRegistered: boolean } | null | undefined };
+
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', user?: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, id: string, email: string, hasRegistered: boolean } | null | undefined };
+export type GetMeQuery = { __typename?: 'Query', user?: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } | null | undefined };
 
 export type GetMeDetailQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeDetailQuery = { __typename?: 'Query', user?: { __typename?: 'User', createdAt: any, updatedAt: any, photo?: string | null | undefined, name?: string | null | undefined, id: string, email: string, hasRegistered: boolean } | null | undefined };
+export type GetMeDetailQuery = { __typename?: 'Query', user?: { __typename?: 'User', createdAt: any, updatedAt: any, photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } | null | undefined };
 
 export const MinUserFragmentDoc = gql`
     fragment minUser on User {
@@ -229,6 +235,7 @@ export const UserFragmentDoc = gql`
   ...minUser
   photo
   name
+  phone
 }
     ${MinUserFragmentDoc}`;
 export const LoginUserDocument = gql`
@@ -485,6 +492,40 @@ export function useGetAllPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllPostsQueryHookResult = ReturnType<typeof useGetAllPostsQuery>;
 export type GetAllPostsLazyQueryHookResult = ReturnType<typeof useGetAllPostsLazyQuery>;
 export type GetAllPostsQueryResult = Apollo.QueryResult<GetAllPostsQuery, GetAllPostsQueryVariables>;
+export const GetBaseMeDocument = gql`
+    query GetBaseMe {
+  user: getMe {
+    ...minUser
+  }
+}
+    ${MinUserFragmentDoc}`;
+
+/**
+ * __useGetBaseMeQuery__
+ *
+ * To run a query within a React component, call `useGetBaseMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBaseMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBaseMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBaseMeQuery(baseOptions?: Apollo.QueryHookOptions<GetBaseMeQuery, GetBaseMeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBaseMeQuery, GetBaseMeQueryVariables>(GetBaseMeDocument, options);
+      }
+export function useGetBaseMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBaseMeQuery, GetBaseMeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBaseMeQuery, GetBaseMeQueryVariables>(GetBaseMeDocument, options);
+        }
+export type GetBaseMeQueryHookResult = ReturnType<typeof useGetBaseMeQuery>;
+export type GetBaseMeLazyQueryHookResult = ReturnType<typeof useGetBaseMeLazyQuery>;
+export type GetBaseMeQueryResult = Apollo.QueryResult<GetBaseMeQuery, GetBaseMeQueryVariables>;
 export const GetMeDocument = gql`
     query GetMe {
   user: getMe {
