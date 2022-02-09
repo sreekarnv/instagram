@@ -1,5 +1,6 @@
 fragment minUser on User {
 	id
 	email
-	hasRegistered
+	photo
+	name
 }

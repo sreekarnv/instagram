@@ -11,9 +11,10 @@ import GradientButton from '../../shared/components/ui/GradientButton';
 import Text from '../../shared/components/ui/Text';
 import Constants from 'expo-constants';
 import { ProfileScreenProp } from './types';
-import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@shopify/restyle';
 import { Theme } from '../../config/theme';
+import Loader from '../../shared/components/ui/Loader';
 
 interface ProfileHomeScreenProps extends ProfileScreenProp<'ProfileHome'> {}
 
@@ -25,11 +26,7 @@ const ProfileHomeScreen: React.FC<ProfileHomeScreenProps> = ({
 	const theme = useTheme<Theme>();
 
 	if (loading) {
-		return (
-			<Box flex={1} justifyContent='center' alignItems='center'>
-				<ActivityIndicator size='large' color={theme.colors.secondary} />
-			</Box>
-		);
+		return <Loader />;
 	}
 
 	return (

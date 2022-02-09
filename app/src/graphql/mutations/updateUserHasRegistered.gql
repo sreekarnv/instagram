@@ -6,6 +6,6 @@ mutation UpdateUserHasRegistered(
 	user: updateHasRegistered(
 		input: { name: $name, phone: $phone, photo: $photo }
 	) {
-		...minUser
+		...user
 	}
 }

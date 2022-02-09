@@ -1,8 +1,7 @@
 import { Feather } from '@expo/vector-icons';
-import { useTheme } from '@shopify/restyle';
 import Constants from 'expo-constants';
 import React from 'react';
-import { TouchableOpacity, ActivityIndicator } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import {
 	GetMeDocument,
@@ -11,13 +10,13 @@ import {
 } from '../../graphql/generated';
 import Avatar from '../../shared/components/ui/Avatar';
 import Box from '../../shared/components/ui/Box';
+import Loader from '../../shared/components/ui/Loader';
 import Text from '../../shared/components/ui/Text';
 import { ProfileScreenProp } from './types';
 
 interface EditAvatarScreenProps extends ProfileScreenProp<'EditAvatar'> {}
 
 const EditAvatarScreen: React.FC<EditAvatarScreenProps> = ({ navigation }) => {
-	const theme = useTheme();
 	const { data, loading: userLoading } = useGetMeQuery();
 	const [selected, setSelected] = React.useState<number>(1);
 	const [updatePhoto, { loading }] = useUpdateUserPhotoAvatarMutation();
@@ -78,11 +77,7 @@ const EditAvatarScreen: React.FC<EditAvatarScreenProps> = ({ navigation }) => {
 	}, [selected]);
 
 	if (loading || userLoading) {
-		return (
-			<Box flex={1} justifyContent='center' alignItems='center'>
-				<ActivityIndicator size='large' color={theme.colors.secondary} />
-			</Box>
-		);
+		return <Loader />;
 	}
 
 	return (

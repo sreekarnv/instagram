@@ -110,6 +110,7 @@ export type Query = {
   getAllPosts: PostsResponseType;
   getAllUsers: Array<User>;
   getMe?: Maybe<User>;
+  getPost: Post;
   getUserIds: Array<Scalars['String']>;
 };
 
@@ -117,6 +118,11 @@ export type Query = {
 export type QueryGetAllPostsArgs = {
   cursor?: InputMaybe<Scalars['DateTime']>;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetPostArgs = {
+  postId: Scalars['String'];
 };
 
 export type RegisterUserInput = {
@@ -149,9 +155,18 @@ export type User = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type MinUserFragment = { __typename?: 'User', id: string, email: string, hasRegistered: boolean };
+export type MinUserFragment = { __typename?: 'User', id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined };
 
-export type UserFragment = { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean };
+export type PostFragment = { __typename?: 'Post', id: string, description: string, createdAt: any, photo?: string | null | undefined, liked: boolean, numLikes: number, user: { __typename?: 'User', id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } };
+
+export type UserFragment = { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined };
+
+export type LikePostMutationVariables = Exact<{
+  postId: Scalars['String'];
+}>;
+
+
+export type LikePostMutation = { __typename?: 'Mutation', likePost: boolean };
 
 export type LoginUserMutationVariables = Exact<{
   email: Scalars['String'];
@@ -159,7 +174,7 @@ export type LoginUserMutationVariables = Exact<{
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', user: { __typename?: 'User', id: string, email: string, hasRegistered: boolean } };
+export type LoginUserMutation = { __typename?: 'Mutation', user: { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -173,7 +188,7 @@ export type RegisterUserMutationVariables = Exact<{
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', user: { __typename?: 'User', id: string, email: string, hasRegistered: boolean } };
+export type RegisterUserMutation = { __typename?: 'Mutation', user: { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } };
 
 export type UpdateUserDetailsMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -182,7 +197,7 @@ export type UpdateUserDetailsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserDetailsMutation = { __typename?: 'Mutation', updateUserDetails: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } };
+export type UpdateUserDetailsMutation = { __typename?: 'Mutation', updateUserDetails: { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } };
 
 export type UpdateUserHasRegisteredMutationVariables = Exact<{
   name: Scalars['String'];
@@ -191,14 +206,14 @@ export type UpdateUserHasRegisteredMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserHasRegisteredMutation = { __typename?: 'Mutation', user: { __typename?: 'User', id: string, email: string, hasRegistered: boolean } };
+export type UpdateUserHasRegisteredMutation = { __typename?: 'Mutation', user: { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } };
 
 export type UpdateUserPhotoAvatarMutationVariables = Exact<{
   avatar: Scalars['String'];
 }>;
 
 
-export type UpdateUserPhotoAvatarMutation = { __typename?: 'Mutation', user: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } };
+export type UpdateUserPhotoAvatarMutation = { __typename?: 'Mutation', user: { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } };
 
 export type GetAllPostsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -206,45 +221,91 @@ export type GetAllPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllPostsQuery = { __typename?: 'Query', query: { __typename?: 'PostsResponseType', count: number, hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, description: string, updatedAt: any, createdAt: any, photo?: string | null | undefined, user: { __typename?: 'User', id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } }> } };
-
-export type GetBaseMeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetBaseMeQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, email: string, hasRegistered: boolean } | null | undefined };
+export type GetAllPostsQuery = { __typename?: 'Query', query: { __typename?: 'PostsResponseType', count: number, hasMore: boolean, posts: Array<{ __typename?: 'Post', id: string, description: string, createdAt: any, photo?: string | null | undefined, liked: boolean, numLikes: number, user: { __typename?: 'User', id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } }> } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', user?: { __typename?: 'User', photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } | null | undefined };
+export type GetMeQuery = { __typename?: 'Query', user?: { __typename?: 'User', hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } | null | undefined };
 
 export type GetMeDetailQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeDetailQuery = { __typename?: 'Query', user?: { __typename?: 'User', createdAt: any, updatedAt: any, photo?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, id: string, email: string, hasRegistered: boolean } | null | undefined };
+export type GetMeDetailQuery = { __typename?: 'Query', user?: { __typename?: 'User', createdAt: any, hasRegistered: boolean, phone?: string | null | undefined, id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } | null | undefined };
+
+export type GetPostQueryVariables = Exact<{
+  postId: Scalars['String'];
+}>;
+
+
+export type GetPostQuery = { __typename?: 'Query', post: { __typename?: 'Post', id: string, description: string, createdAt: any, photo?: string | null | undefined, liked: boolean, numLikes: number, user: { __typename?: 'User', id: string, email: string, photo?: string | null | undefined, name?: string | null | undefined } } };
 
 export const MinUserFragmentDoc = gql`
     fragment minUser on User {
   id
   email
-  hasRegistered
-}
-    `;
-export const UserFragmentDoc = gql`
-    fragment user on User {
-  ...minUser
   photo
   name
-  phone
 }
-    ${MinUserFragmentDoc}`;
-export const LoginUserDocument = gql`
-    mutation LoginUser($email: String!, $password: String!) {
-  user: loginUser(input: {email: $email, password: $password}) {
+    `;
+export const PostFragmentDoc = gql`
+    fragment post on Post {
+  id
+  description
+  createdAt
+  photo
+  liked
+  numLikes
+  user {
     ...minUser
   }
 }
     ${MinUserFragmentDoc}`;
+export const UserFragmentDoc = gql`
+    fragment user on User {
+  ...minUser
+  hasRegistered
+  phone
+}
+    ${MinUserFragmentDoc}`;
+export const LikePostDocument = gql`
+    mutation LikePost($postId: String!) {
+  likePost(postId: $postId)
+}
+    `;
+export type LikePostMutationFn = Apollo.MutationFunction<LikePostMutation, LikePostMutationVariables>;
+
+/**
+ * __useLikePostMutation__
+ *
+ * To run a mutation, you first call `useLikePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likePostMutation, { data, loading, error }] = useLikePostMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useLikePostMutation(baseOptions?: Apollo.MutationHookOptions<LikePostMutation, LikePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikePostMutation, LikePostMutationVariables>(LikePostDocument, options);
+      }
+export type LikePostMutationHookResult = ReturnType<typeof useLikePostMutation>;
+export type LikePostMutationResult = Apollo.MutationResult<LikePostMutation>;
+export type LikePostMutationOptions = Apollo.BaseMutationOptions<LikePostMutation, LikePostMutationVariables>;
+export const LoginUserDocument = gql`
+    mutation LoginUser($email: String!, $password: String!) {
+  user: loginUser(input: {email: $email, password: $password}) {
+    ...user
+  }
+}
+    ${UserFragmentDoc}`;
 export type LoginUserMutationFn = Apollo.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
 
 /**
@@ -307,10 +368,10 @@ export const RegisterUserDocument = gql`
   user: registerUser(
     input: {password: $password, passwordConfirm: $passwordConfirm, email: $email}
   ) {
-    ...minUser
+    ...user
   }
 }
-    ${MinUserFragmentDoc}`;
+    ${UserFragmentDoc}`;
 export type RegisterUserMutationFn = Apollo.MutationFunction<RegisterUserMutation, RegisterUserMutationVariables>;
 
 /**
@@ -377,10 +438,10 @@ export type UpdateUserDetailsMutationOptions = Apollo.BaseMutationOptions<Update
 export const UpdateUserHasRegisteredDocument = gql`
     mutation UpdateUserHasRegistered($name: String!, $photo: String!, $phone: String) {
   user: updateHasRegistered(input: {name: $name, phone: $phone, photo: $photo}) {
-    ...minUser
+    ...user
   }
 }
-    ${MinUserFragmentDoc}`;
+    ${UserFragmentDoc}`;
 export type UpdateUserHasRegisteredMutationFn = Apollo.MutationFunction<UpdateUserHasRegisteredMutation, UpdateUserHasRegisteredMutationVariables>;
 
 /**
@@ -448,21 +509,11 @@ export const GetAllPostsDocument = gql`
     count
     hasMore
     posts {
-      id
-      description
-      updatedAt
-      createdAt
-      photo
-      user {
-        id
-        email
-        photo
-        name
-      }
+      ...post
     }
   }
 }
-    `;
+    ${PostFragmentDoc}`;
 
 /**
  * __useGetAllPostsQuery__
@@ -492,40 +543,6 @@ export function useGetAllPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetAllPostsQueryHookResult = ReturnType<typeof useGetAllPostsQuery>;
 export type GetAllPostsLazyQueryHookResult = ReturnType<typeof useGetAllPostsLazyQuery>;
 export type GetAllPostsQueryResult = Apollo.QueryResult<GetAllPostsQuery, GetAllPostsQueryVariables>;
-export const GetBaseMeDocument = gql`
-    query GetBaseMe {
-  user: getMe {
-    ...minUser
-  }
-}
-    ${MinUserFragmentDoc}`;
-
-/**
- * __useGetBaseMeQuery__
- *
- * To run a query within a React component, call `useGetBaseMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBaseMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBaseMeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetBaseMeQuery(baseOptions?: Apollo.QueryHookOptions<GetBaseMeQuery, GetBaseMeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBaseMeQuery, GetBaseMeQueryVariables>(GetBaseMeDocument, options);
-      }
-export function useGetBaseMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBaseMeQuery, GetBaseMeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBaseMeQuery, GetBaseMeQueryVariables>(GetBaseMeDocument, options);
-        }
-export type GetBaseMeQueryHookResult = ReturnType<typeof useGetBaseMeQuery>;
-export type GetBaseMeLazyQueryHookResult = ReturnType<typeof useGetBaseMeLazyQuery>;
-export type GetBaseMeQueryResult = Apollo.QueryResult<GetBaseMeQuery, GetBaseMeQueryVariables>;
 export const GetMeDocument = gql`
     query GetMe {
   user: getMe {
@@ -565,7 +582,6 @@ export const GetMeDetailDocument = gql`
   user: getMe {
     ...user
     createdAt
-    updatedAt
   }
 }
     ${UserFragmentDoc}`;
@@ -596,3 +612,38 @@ export function useGetMeDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMeDetailQueryHookResult = ReturnType<typeof useGetMeDetailQuery>;
 export type GetMeDetailLazyQueryHookResult = ReturnType<typeof useGetMeDetailLazyQuery>;
 export type GetMeDetailQueryResult = Apollo.QueryResult<GetMeDetailQuery, GetMeDetailQueryVariables>;
+export const GetPostDocument = gql`
+    query GetPost($postId: String!) {
+  post: getPost(postId: $postId) {
+    ...post
+  }
+}
+    ${PostFragmentDoc}`;
+
+/**
+ * __useGetPostQuery__
+ *
+ * To run a query within a React component, call `useGetPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPostQuery({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useGetPostQuery(baseOptions: Apollo.QueryHookOptions<GetPostQuery, GetPostQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPostQuery, GetPostQueryVariables>(GetPostDocument, options);
+      }
+export function useGetPostLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostQuery, GetPostQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPostQuery, GetPostQueryVariables>(GetPostDocument, options);
+        }
+export type GetPostQueryHookResult = ReturnType<typeof useGetPostQuery>;
+export type GetPostLazyQueryHookResult = ReturnType<typeof useGetPostLazyQuery>;
+export type GetPostQueryResult = Apollo.QueryResult<GetPostQuery, GetPostQueryVariables>;

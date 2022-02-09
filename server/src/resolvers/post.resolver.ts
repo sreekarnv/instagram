@@ -96,6 +96,17 @@ export class PostResolver {
 		};
 	}
 
+	@Query(() => Post)
+	async getPost(@Arg('postId') postId: string) {
+		const post = await Post.findOne({ where: { id: postId } });
+
+		if (!post) {
+			throw new Error('couldnt find your post');
+		}
+
+		return post;
+	}
+
 	@Mutation(() => Boolean)
 	async insertPosts() {
 		const newPosts = posts.map((p, i) => {

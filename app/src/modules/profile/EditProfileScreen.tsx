@@ -1,15 +1,8 @@
 import { Feather } from '@expo/vector-icons';
-import { useTheme } from '@shopify/restyle';
 import { Formik } from 'formik';
 import React from 'react';
-import {
-	ActivityIndicator,
-	Dimensions,
-	SafeAreaView,
-	TouchableOpacity,
-} from 'react-native';
+import { Dimensions, SafeAreaView, TouchableOpacity } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-import { Theme } from '../../config/theme';
 import {
 	GetMeDocument,
 	useGetMeQuery,
@@ -17,6 +10,7 @@ import {
 } from '../../graphql/generated';
 import FormInput from '../../shared/components/form/FormInput';
 import Box from '../../shared/components/ui/Box';
+import Loader from '../../shared/components/ui/Loader';
 import DismissKeyboard from '../../shared/components/utils/DismissKeyboard';
 import { ProfileScreenProp } from './types';
 
@@ -27,16 +21,11 @@ const { height } = Dimensions.get('window');
 const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 	navigation,
 }) => {
-	const theme = useTheme<Theme>();
 	const { data, loading: getMeLoading } = useGetMeQuery();
 	const [updateDetails, { loading }] = useUpdateUserDetailsMutation();
 
 	if (loading || getMeLoading) {
-		return (
-			<Box flex={1} justifyContent='center' alignItems='center'>
-				<ActivityIndicator size='large' color={theme.colors.secondary} />
-			</Box>
-		);
+		return <Loader />;
 	}
 
 	return (
@@ -70,8 +59,6 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 										});
 
 										navigation.navigate('ProfileHome');
-
-										resetForm();
 									} catch (err: any) {
 										showMessage({
 											message: 'Update Profile Failed',

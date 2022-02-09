@@ -5,8 +5,8 @@ import React from 'react';
 import client from './src/config/apollo';
 import theme from './src/config/theme';
 import { useFonts } from 'expo-font';
-import Text from './src/shared/components/ui/Text';
 import Navigator from './src/modules/navigation';
+import Loader from './src/shared/components/ui/Loader';
 
 export default function App() {
 	const [loaded] = useFonts({
@@ -19,7 +19,7 @@ export default function App() {
 	});
 
 	if (!loaded) {
-		return <Text>Loading...</Text>;
+		return <Loader />;
 	}
 
 	return (

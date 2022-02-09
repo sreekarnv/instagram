@@ -10,6 +10,6 @@ mutation RegisterUser(
 			email: $email
 		}
 	) {
-		...minUser
+		...user
 	}
 }

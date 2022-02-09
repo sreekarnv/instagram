@@ -10,10 +10,7 @@ import { Formik } from 'formik';
 import FormInput from '../../shared/components/form/FormInput';
 import * as Yup from 'yup';
 import { showMessage } from 'react-native-flash-message';
-import {
-	GetBaseMeDocument,
-	useLoginUserMutation,
-} from '../../graphql/generated';
+import { GetMeDocument, useLoginUserMutation } from '../../graphql/generated';
 import DismissKeyboard from '../../shared/components/utils/DismissKeyboard';
 
 const { height } = Dimensions.get('window');
@@ -54,9 +51,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 									await loginUser({
 										variables: { ...values },
 										update: (cache, { data }) => {
-											console.log(data);
 											cache.writeQuery({
-												query: GetBaseMeDocument,
+												query: GetMeDocument,
 												data: {
 													user: {
 														__typename: 'User',

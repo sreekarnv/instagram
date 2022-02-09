@@ -3,17 +3,7 @@ query GetAllPosts($limit: Int, $cursor: DateTime) {
 		count
 		hasMore
 		posts {
-			id
-			description
-			updatedAt
-			createdAt
-			photo
-			user {
-				id
-				email
-				photo
-				name
-			}
+			...post
 		}
 	}
 }

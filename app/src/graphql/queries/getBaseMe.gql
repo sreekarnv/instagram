@@ -1,5 +1,0 @@
-query GetBaseMe {
-	user: getMe {
-		...minUser
-	}
-}

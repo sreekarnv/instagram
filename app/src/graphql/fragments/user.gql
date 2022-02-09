@@ -1,6 +1,5 @@
 fragment user on User {
 	...minUser
-	photo
-	name
+	hasRegistered
 	phone
 }
