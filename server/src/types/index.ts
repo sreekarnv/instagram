@@ -1,5 +1,6 @@
 import DataLoader from 'dataloader';
 import { Request, Response } from 'express';
+import { Stream } from 'stream';
 import { Likes } from '../entity/like.entity';
 import { User } from '../entity/user.entity';
 
@@ -37,3 +38,10 @@ export type ExpressContext = {
 		}
 	>;
 };
+
+export class Upload {
+	encoding!: string;
+	filename!: string;
+	mimetype!: string;
+	createReadStream!: () => Stream;
+}

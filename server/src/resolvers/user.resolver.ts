@@ -14,8 +14,7 @@ import { validateEmail } from '../utils/validateEmail';
 @Resolver(() => User)
 export class UserResolver {
 	@Query(() => [User])
-	getAllUsers(@Ctx() { req }: ExpressContext): Promise<User[]> {
-		console.log(req.session);
+	getAllUsers(@Ctx() {}: ExpressContext): Promise<User[]> {
 		return User.find();
 	}
 

@@ -46,9 +46,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({ navigation, route }) => {
 											});
 										},
 									});
-								} catch (err: any) {
-									console.log({ ...err });
-								}
+								} catch (err: any) {}
 
 								resetForm();
 							}}

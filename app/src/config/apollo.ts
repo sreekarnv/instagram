@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import Constants from 'expo-constants';
+import createUploadLink from 'apollo-upload-client/public/createUploadLink.js';
 
 const client = new ApolloClient({
 	uri: `${Constants.manifest?.extra?.SERVER_URL}/graphql`,
@@ -26,6 +27,10 @@ const client = new ApolloClient({
 		},
 	}),
 	credentials: 'include',
+	// @ts-ignore
+	link: createUploadLink({
+		uri: `${Constants.manifest?.extra?.SERVER_URL}/graphql`,
+	}),
 });
 
 export default client;

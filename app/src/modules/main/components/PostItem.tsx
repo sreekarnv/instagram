@@ -114,7 +114,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
 					<Box>
 						<Image
 							style={{ minHeight: 400, width }}
-							source={{ uri: post.photo! }}
+							source={{
+								uri: `${Constants.manifest?.extra?.SERVER_URL}${post.photo!}`,
+							}}
 						/>
 					</Box>
 					<Box p='m' alignItems='flex-end'>

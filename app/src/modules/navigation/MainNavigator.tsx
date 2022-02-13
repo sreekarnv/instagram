@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@shopify/restyle';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import CreatePostScreen from '../main/CreatePostScreen';
 import FeedScreen from '../main/FeedScreen';
 import ProfileScreen from '../main/ProfileScreen';
 
@@ -39,7 +40,24 @@ const FeedNavigator: React.FC<FeedNavigatorProps> = ({}) => {
 				<FeedTab.Screen
 					options={{
 						headerShown: false,
+						tabBarIcon: ({ focused }) => (
+							<Feather
+								color={focused ? theme.colors.primary : theme.colors.gray}
+								name='edit'
+								size={25}
+							/>
+						),
 						tabBarShowLabel: false,
+					}}
+					name='MainCreatePost'
+					component={CreatePostScreen}
+				/>
+
+				<FeedTab.Screen
+					options={{
+						headerShown: false,
+						tabBarShowLabel: false,
+
 						tabBarIcon: ({ focused }) => (
 							<Feather
 								color={focused ? theme.colors.primary : theme.colors.gray}

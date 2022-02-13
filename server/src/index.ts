@@ -16,6 +16,7 @@ import { customAuthChecker } from './middleware/auth';
 import config from './ormconfig';
 import { PostResolver } from './resolvers/post.resolver';
 import userLoader from './dataloaders/userLoader';
+import { graphqlUploadExpress } from 'graphql-upload';
 import path from 'path';
 import { likeLoader, numLikesLoader } from './dataloaders/likeLoader';
 
@@ -37,6 +38,8 @@ const PORT = process.env.PORT || 4000;
 			express.static(path.join(__dirname, '../uploads', 'avatars'))
 		);
 
+		app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 		app.set('trust proxy', 1);
 		app.use(
 			cors({
@@ -53,6 +56,8 @@ const PORT = process.env.PORT || 4000;
 				maxAge: 1000 * 60 * 60 * 24 * 7,
 			})
 		);
+
+		app.use('/graphql', graphqlUploadExpress());
 
 		const server = new ApolloServer({
 			schema: await buildSchema({

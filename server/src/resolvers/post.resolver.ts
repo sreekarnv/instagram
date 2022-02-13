@@ -9,6 +9,7 @@ import {
 	Resolver,
 	Root,
 } from 'type-graphql';
+import { createWriteStream } from 'fs';
 import { posts } from '../data/posts';
 import { Likes } from '../entity/like.entity';
 import { Post } from '../entity/post.entity';
@@ -17,6 +18,7 @@ import { CreatePostInputType, PostsResponseType } from '../typeDefs/post.types';
 import { ExpressContext } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { getConnection } from 'typeorm';
+import path from 'path';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -53,6 +55,36 @@ export class PostResolver {
 		let user = await userLoader.load(post.userId);
 
 		return user!;
+	}
+
+	@Mutation(() => Post)
+	async createPost(
+		@Ctx() { req }: ExpressContext,
+		@Arg('details') { description, photo }: CreatePostInputType
+	) {
+		const { createReadStream } = await photo;
+		const filename = `${uuidv4()}.jpg`;
+		new Promise(async (resolve, reject) =>
+			createReadStream().pipe(
+				createWriteStream(
+					path.resolve(`${__dirname}/../../uploads/${filename}`)
+				)
+					.on('finish', () => resolve(true))
+					.on('error', () => reject)
+			)
+		);
+
+		try {
+			const post = await Post.create({
+				description,
+				photo: `/uploads/${filename}`,
+				userId: req.session.userId,
+			}).save();
+
+			return post;
+		} catch (err) {
+			return err;
+		}
 	}
 
 	@Query(() => PostsResponseType)
@@ -127,21 +159,21 @@ export class PostResolver {
 		return true;
 	}
 
-	@Authorized()
-	@Mutation(() => Post)
-	async createPost(
-		@Arg('input') { description, photo }: CreatePostInputType,
-		@Ctx() { req }: ExpressContext
-	) {
-		const userId = req.session.userId;
-		const post = Post.create({
-			description,
-			photo,
-			userId,
-		});
-		await post.save();
-		return post;
-	}
+	// @Authorized()
+	// @Mutation(() => Post)
+	// async createPost(
+	// 	@Arg('input') { description, photo }: CreatePostInputType,
+	// 	@Ctx() { req }: ExpressContext
+	// ) {
+	// 	const userId = req.session.userId;
+	// 	const post = Post.create({
+	// 		description,
+	// 		photo,
+	// 		userId,
+	// 	});
+	// 	await post.save();
+	// 	return post;
+	// }
 
 	@Authorized()
 	@Mutation(() => Boolean)

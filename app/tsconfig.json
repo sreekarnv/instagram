@@ -3,5 +3,10 @@
   "compilerOptions": {
     "strict": true,
     "noUnusedLocals": true
-  }
+  },
+  "include": [
+    "./src/**/*",
+    "./App.tsx",
+    "./app.d.ts"
+  ]
 }
