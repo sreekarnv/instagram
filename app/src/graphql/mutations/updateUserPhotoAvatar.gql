@@ -1,0 +1,5 @@
+mutation UpdateUserPhotoAvatar($avatar: String!) {
+	user: updateUserPhotoAvatar(avatar: $avatar) {
+		...user
+	}
+}

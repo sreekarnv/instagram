@@ -1,0 +1,9 @@
+query GetAllPosts($limit: Int, $cursor: DateTime) {
+	query: getAllPosts(limit: $limit, cursor: $cursor) {
+		count
+		hasMore
+		posts {
+			...post
+		}
+	}
+}

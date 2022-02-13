@@ -1,4 +1,4 @@
-import { Likes } from './../entity/Likes';
+import { Likes } from './../entity/like.entity';
 import DataLoader from 'dataloader';
 
 export const likeLoader = () => {

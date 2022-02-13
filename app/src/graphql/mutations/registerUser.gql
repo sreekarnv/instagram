@@ -1,0 +1,15 @@
+mutation RegisterUser(
+	$email: String!
+	$password: String!
+	$passwordConfirm: String!
+) {
+	user: registerUser(
+		input: {
+			password: $password
+			passwordConfirm: $passwordConfirm
+			email: $email
+		}
+	) {
+		...user
+	}
+}
