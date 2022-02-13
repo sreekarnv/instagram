@@ -8,64 +8,10 @@ import {
 	UpdateUserDetailsInputType,
 } from '../typeDefs/user.types';
 import { ExpressContext } from '../types';
-import { users } from '../data/users';
 import { validateEmail } from '../utils/validateEmail';
 
 @Resolver(() => User)
 export class UserResolver {
-	@Query(() => [User])
-	getAllUsers(@Ctx() {}: ExpressContext): Promise<User[]> {
-		return User.find();
-	}
-
-	@Mutation(() => Boolean)
-	async insertUsers() {
-		const newUsers = users.map((user) => {
-			return {
-				password:
-					'$argon2i$v=19$m=4096,t=3,p=1$itI9Mg9UlOajBnXTJDo$3s34HpE8FzKHajiNASh5MSyitAWwywn3i4zT82vc4cM',
-				hasRegistered: true,
-				...user,
-			};
-		});
-
-		const user = await User.insert([...newUsers]);
-
-		return !!user;
-	}
-
-	@Mutation(() => Boolean)
-	async updateUsersPhoto() {
-		const users = await User.find();
-
-		users.forEach(async (u) => {
-			const randomNumber = Math.floor(Math.random() * 4) + 1;
-			u.photo = `/uploads/avatars/avatar-${randomNumber}.png`;
-			await u.save();
-		});
-
-		return true;
-	}
-
-	@Query(() => [String])
-	async getUserIds() {
-		const ids = await getConnection()
-			.createQueryBuilder()
-			.select('id')
-			.from(User, 'user')
-			.getRawMany();
-
-		const userIds = ids.map((id) => id.id);
-		return userIds;
-	}
-
-	@Mutation(() => Boolean)
-	async deleteUsers(): Promise<boolean> {
-		await User.delete({});
-
-		return true;
-	}
-
 	@Query(() => User, { nullable: true })
 	async getMe(@Ctx() { req }: ExpressContext): Promise<User | null> {
 		const user = await User.findOne({ where: { id: req.session.userId } });

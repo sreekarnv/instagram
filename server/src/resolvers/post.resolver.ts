@@ -10,7 +10,6 @@ import {
 	Root,
 } from 'type-graphql';
 import { createWriteStream } from 'fs';
-import { posts } from '../data/posts';
 import { Likes } from '../entity/like.entity';
 import { Post } from '../entity/post.entity';
 import { User } from '../entity/user.entity';
@@ -137,57 +136,6 @@ export class PostResolver {
 		}
 
 		return post;
-	}
-
-	@Mutation(() => Boolean)
-	async insertPosts() {
-		const newPosts = posts.map((p, i) => {
-			const photoSize = 200 + i;
-			return {
-				photo: `https://source.unsplash.com/random/${photoSize}x${photoSize}`,
-				...p,
-			};
-		});
-
-		await Post.insert([...newPosts]);
-		return true;
-	}
-
-	@Mutation(() => Boolean)
-	async deleteAllPosts() {
-		await Post.delete({});
-		return true;
-	}
-
-	// @Authorized()
-	// @Mutation(() => Post)
-	// async createPost(
-	// 	@Arg('input') { description, photo }: CreatePostInputType,
-	// 	@Ctx() { req }: ExpressContext
-	// ) {
-	// 	const userId = req.session.userId;
-	// 	const post = Post.create({
-	// 		description,
-	// 		photo,
-	// 		userId,
-	// 	});
-	// 	await post.save();
-	// 	return post;
-	// }
-
-	@Authorized()
-	@Mutation(() => Boolean)
-	async deletePost(@Arg('id') id: string, @Ctx() { req }: ExpressContext) {
-		try {
-			await Post.delete({
-				id,
-				userId: req.session.userId,
-			});
-
-			return true;
-		} catch (err) {
-			return err;
-		}
 	}
 
 	@Authorized()
