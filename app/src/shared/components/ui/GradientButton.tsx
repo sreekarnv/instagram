@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import Box from './Box';
 import Text from './Text';
 
@@ -15,7 +15,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
 	return (
 		<>
 			<LinearGradient
-				style={{ borderRadius: 100 }}
+				style={{ borderRadius: Platform.OS === 'ios' ? 10 : 100 }}
 				end={{ x: 1, y: 0 }}
 				start={{ x: 0, y: 0 }}
 				colors={['#facc15', '#fac00e', '#f9b50a', '#f7a909', '#f59e0b']}>
