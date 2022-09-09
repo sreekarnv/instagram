@@ -1,6 +1,0 @@
-fragment minUser on User {
-	id
-	email
-	photo
-	name
-}

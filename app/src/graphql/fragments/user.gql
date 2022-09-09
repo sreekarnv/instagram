@@ -1,5 +1,0 @@
-fragment user on User {
-	...minUser
-	hasRegistered
-	phone
-}

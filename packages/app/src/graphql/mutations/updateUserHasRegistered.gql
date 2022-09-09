@@ -1,0 +1,11 @@
+mutation UpdateUserHasRegistered(
+	$name: String!
+	$photo: String!
+	$phone: String
+) {
+	user: updateHasRegistered(
+		input: { name: $name, phone: $phone, photo: $photo }
+	) {
+		...user
+	}
+}

@@ -1,5 +1,0 @@
-query GetMe {
-	user: getMe {
-		...user
-	}
-}
