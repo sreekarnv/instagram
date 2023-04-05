@@ -2,9 +2,9 @@
 
 ## React Native | Express | Postresql | Graphql | Typescript
 
-|         Feed Screen           |         Edit Avatar Screen    |        Profile Screen         |
-| :---------------------------: | :---------------------------: | :---------------------------: |
-| ![](app/assets/preview/1.jpg) | ![](app/assets/preview/2.jpg) | ![](app/assets/preview/3.jpg) |
+|               Feed Screen                |            Edit Avatar Screen            |              Profile Screen              |
+| :--------------------------------------: | :--------------------------------------: | :--------------------------------------: |
+| ![](./packages/app/assets/preview/1.jpg) | ![](./packages/app/assets/preview/2.jpg) | ![](./packages/app/assets/preview/3.jpg) |
 
 ### Installation
 
